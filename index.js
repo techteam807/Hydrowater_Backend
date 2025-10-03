@@ -17,7 +17,7 @@ connectDB();
 app.use('/',routes);
 
 app.get('/', (req, res) => {
-  res.send("Backend of Wallet is running...")
+  res.send("Backend of HydroWater is running...")
 });
 const PORT = process.env.PORT || 5000;
 
