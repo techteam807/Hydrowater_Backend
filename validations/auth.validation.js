@@ -19,15 +19,9 @@ const loginTechnicianValidation = Joi.object({
         "string.empty": "Mobile number is required",
         "string.pattern.base": "Mobile number must be 10 digits (optional +91 country code)",
       }),
-  name: Joi.string().min(2).max(50).required().messages({
-    "string.empty": "Name is required",
-  }),
 });
 
 const verifyOtpValidation = Joi.object({
-  name: Joi.string().min(2).max(50).required().messages({
-    "string.empty": "Name is required",
-  }),
    mobile_number: Joi.string()
      .pattern(/^(\+91)?[0-9]{10}$/)
      .required()

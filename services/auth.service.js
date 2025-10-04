@@ -2,6 +2,7 @@ const { default: mongoose } = require("mongoose");
 const User = require("../models/user.model");
 const { generateToken } = require("../config/jwt");
 const { decryptPassword } = require("../utils/encryption");
+const { sendWhatsAppOtp } = require("../utils/whatsapp");
 
 const loginAdmin = async (email, password) => {
   const session = await mongoose.startSession();
@@ -28,14 +29,13 @@ const loginAdmin = async (email, password) => {
   }
 };
 
-const loginTechnician = async (mobile_number, name) => {
+const loginTechnician = async (mobile_number) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
     const user = await User.findOne({
       mobile_number: mobile_number,
-      name: name,
       userRole: { $in: ["technician", "supertechnician"] },
     }).session(session);
     if (!user) throw new Error("Technician not found");
@@ -44,6 +44,7 @@ const loginTechnician = async (mobile_number, name) => {
     user.otpExpires = Date.now() + 5 * 60 * 1000; // 5 minutes
     await user.save();
     console.log(`OTP for ${mobile_number}: ${otp}`);
+    // await sendWhatsAppOtp(mobile_number, otp);
 
     await session.commitTransaction();
     session.endSession();
@@ -56,12 +57,14 @@ const loginTechnician = async (mobile_number, name) => {
   }
 };
 
-const verifyOtp = async (name, mobile_number, otp) => {
+const verifyOtp = async (mobile_number, otp) => {
+  console.log(mobile_number, otp);
+  
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-    const user = await User.findOne({ name, mobile_number });
+    const user = await User.findOne({ mobile_number });
     if (!user) throw new Error("User not found");
     if (user.otp !== otp || user.otpExpires < Date.now()) {
       throw new Error("Invalid or expired OTP");
