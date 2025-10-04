@@ -7,7 +7,8 @@ const authToken = require("../middlewares/authToken");
 
 router.post("/createDealer", authToken, validate(createDealerValidation), dealerController.createDealer);
 router.get("/getDealer", dealerController.fetchDealer);
-router.get("/getDealers", dealerController.fetchDealerDropDown);
+router.get("/getDealers", dealerController.fetchDealers);
+router.get("/getDealersDropdown", dealerController.fetchDealerDropDown);
 
 
 module.exports = router;

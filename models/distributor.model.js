@@ -2,7 +2,8 @@ const mongoose = require("mongoose");
 
 const DistributorSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true, },
+    company_name: { type: String, required: true, },
+    name: { type: String },
     email: { type: String },
     mobile_number: { type: String },
     address: { type: String },

@@ -7,11 +7,18 @@ const { encryptPassword, decryptPassword } = require("../utils/encryption");
 const { UserRoleEnum } = require("../utils/global");
 
 const generateDistributor = async (userId, distributorData) => {
-
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
+    const existing = await Distributor.findOne({
+      mobile_number: distributorData?.mobile_number,
+    }).session(session);
+    if (existing) {
+      throw new Error(
+        `Distributor Alredy Exits With Mobile ${distributorData?.mobile_number}`
+      );
+    }
     const distributor = new Distributor(distributorData);
     await distributor.save({ session });
 
@@ -101,7 +108,66 @@ const getDistributor = async (distributorId = null) => {
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
-    return { error: error.message };
+    throw error;
+  }
+};
+
+const getDistributors = async ({
+  search = "",
+  city,
+  state,
+  country,
+  // filters = {},
+  page = 1,
+  limit = 10,
+}) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    let query = {};
+    if (search) {
+      query.$or = [
+        { mobile_number: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+        { name: { $regex: search, $options: "i" } },
+        { company_name: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    if (city) query.city = { $in: city };
+    if (state) query.state = { $in: state };
+    if (country) query.country = { $in: country };
+
+    // if (filters && Object.keys(filters).length > 0) {
+    //   query = { ...query, ...filters };
+    // }
+
+    const skip = (page - 1) * limit;
+
+    const distributors = await Distributor.find(query)
+      .skip(skip)
+      .limit(limit)
+      .session(session);
+
+    const total = await Distributor.countDocuments(query).session(session);
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return {
+      data: distributors,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
   }
 };
 
@@ -110,15 +176,22 @@ const distributorDropDown = async () => {
   session.startTransaction();
 
   try {
-    const distributor = await Distributor.find().select("_id name");
+    const distributor = await Distributor.find().select(
+      "_id company_name name"
+    );
     await session.commitTransaction();
     session.endSession();
     return distributor;
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
-    return { error: error.message };
+    throw error;
   }
 };
 
-module.exports = { generateDistributor, getDistributor, distributorDropDown };
+module.exports = {
+  generateDistributor,
+  getDistributor,
+  getDistributors,
+  distributorDropDown,
+};

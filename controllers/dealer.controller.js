@@ -4,7 +4,7 @@ const dealerService = require("../services/dealer.service");
 const createDealer = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const  dealerData = req.body;
+    const dealerData = req.body;
     const dealer = await dealerService.generateDealer(userId, dealerData);
     return successResponse(res, dealer, "Dealer Created successfully", 200);
   } catch (error) {
@@ -20,15 +20,68 @@ const fetchDealer = async (req, res) => {
   } catch (error) {
     return errorResponse(res, error.message || "Error While Get Dealer");
   }
-}
+};
+
+const fetchDealers = async (req, res) => {
+  try {
+    const { search, city, state, country, distributorId, page, limit } =
+      req.query;
+    // let filters = {};
+
+    // if (req.query.filters) {
+    //   // Example: filters=country:IND,USA;state:GUJ,CAN
+    //   const filterPairs = req.query.filters.split(";");
+    //   filterPairs.forEach(pair => {
+    //     const [key, value] = pair.split("=");
+    //     if (key && value) {
+    //       if (value.includes(",")) {
+    //         filters[key] = { $in: value.split(",") };
+    //       } else {
+    //         filters[key] = value;
+    //       }
+    //     }
+    //   });
+    // }
+
+    const dealers = await dealerService.getDealers({
+      search,
+      city,
+      state,
+      country,
+      distributorId,
+      // filters,
+      page,
+      limit,
+    });
+    return successResponse(
+      res,
+      dealers.data,
+      "Dealers Fetched!",
+      200,
+      dealers.pagination
+    );
+  } catch (error) {
+    return errorResponse(res, error.message || "Error While Get Dealers");
+  }
+};
 
 const fetchDealerDropDown = async (req, res) => {
   try {
-    const dealers = await dealerService.dealerDropDown();
-    return successResponse(res, dealers, "Dropdown Of Dealers Get!", 200)
+    const distributorId = req.query.distributorId;
+    const dealers = await dealerService.dealerDropDown(distributorId);
+    return successResponse(res, dealers, "Dropdown Of Dealers Get!", 200);
   } catch (error) {
-    return errorResponse(res, error.message || "Error While Get Dropdown Of Dealers", 500)
+    return errorResponse(
+      res,
+      error.message || "Error While Get Dropdown Of Dealers",
+      500
+    );
   }
-}
+};
 
-module.exports = { createDealer, fetchDealer,fetchDealerDropDown };
+module.exports = {
+  createDealer,
+  fetchDealer,
+  fetchDealers,
+  fetchDealerDropDown,
+};

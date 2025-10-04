@@ -27,12 +27,13 @@ const technicianValidation = Joi.object({
     .required()
     .messages({
       "string.empty": "Mobile number is required",
-      "string.pattern.base": "Mobile number must be 10 digits (optional +91 country code)",
+      "string.pattern.base":
+        "Mobile number must be 10 digits (optional +91 country code)",
     }),
   userRole: Joi.string()
     .valid(UserRoleEnum.TECHNICIAN, UserRoleEnum.SUPERTECHNICIAN)
     .required(),
-userParentId: Joi.string().optional().empty(""),
+  userParentId: Joi.string().optional().empty(""),
   userParentType: Joi.string().required().messages({
     "string.empty": "userParentType is required",
   }),

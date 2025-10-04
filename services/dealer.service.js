@@ -11,6 +11,14 @@ const generateDealer = async (userId, dealerData) => {
   session.startTransaction();
 
   try {
+    const existing = await Dealer.findOne({
+      mobile_number: dealerData?.mobile_number,
+    }).session(session);
+    if (existing) {
+      throw new Error(
+        `Dealer Alredy Exits With Mobile ${dealerData?.mobile_number}`
+      );
+    }
     const dealer = new Dealer(dealerData);
     await dealer.save({ session });
 
@@ -90,24 +98,91 @@ const getDealer = async (dealerId = null) => {
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
-    return { error: error.message };
+    throw error;
   }
 };
 
-const dealerDropDown = async () => {
+const getDealers = async ({
+  search = "",
+  city,
+  state,
+  country,
+  distributorId,
+  // filters = {},
+  page = 1,
+  limit = 10,
+}) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-    const dealer = await Dealer.find().select("_id name");
+    let query = {};
+    if (search) {
+      query.$or = [
+        { mobile_number: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+        { name: { $regex: search, $options: "i" } },
+        { company_name: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    if (city) query.city = { $in: city };
+    if (state) query.state = { $in: state };
+    if (country) query.country = { $in: country };
+    if (distributorId) query.distributorId = distributorId;
+
+    // if (filters && Object.keys(filters).length > 0) {
+    //   query = { ...query, ...filters };
+    // }
+
+    const skip = (page - 1) * limit;
+
+    const dealers = await Dealer.find(query)
+      .skip(skip)
+      .limit(limit)
+      .session(session);
+
+    const total = await Dealer.countDocuments(query).session(session);
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return {
+      data: dealers,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+
+const dealerDropDown = async (distributorId = null) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    let query = {};
+    if (distributorId) {
+      query.distributorId = distributorId;
+    }
+    const dealer = await Dealer.find(query).select(
+      "_id company_name name distributorId"
+    );
     await session.commitTransaction();
     session.endSession();
     return dealer;
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
-    return { error: error.message };
+    throw error;
   }
 };
 
-module.exports = { generateDealer, getDealer, dealerDropDown };
+module.exports = { generateDealer, getDealer, getDealers, dealerDropDown };
