@@ -62,16 +62,43 @@ const genrateTechnicianUsers = async (
   }
 };
 
-const getAllUsers = async (userType = null) => {
+const getAllUsers = async ({
+  userType,
+  search = "",
+  userParentType,
+  userParentId,
+  page = 1,
+  limit = 10,
+}) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
     let query = {};
-    if (userType) {
-      query.userRole = userType; // filter by userRole only if provided
+    if (search) {
+      query.$or = [
+        { mobile_number: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+        { name: { $regex: search, $options: "i" } },
+      ];
     }
-    const users = await User.find(query).session(session);
+
+    if (userType) {
+      query.userRole = userType;
+    }
+
+    if (userParentId) query.userParentId = userParentId;
+    if (userParentType) query.userParentType = userParentType;
+
+    const skip = (page - 1) * limit;
+
+    const users = await User.find(query)
+      .skip(skip)
+      .limit(limit)
+      .session(session);
+
+    const total = await User.countDocuments(query).session(session);
+
     if (users && users.password) {
       users.password = decryptPassword(users.password);
     }
@@ -79,7 +106,15 @@ const getAllUsers = async (userType = null) => {
     await session.commitTransaction();
     session.endSession();
 
-    return users;
+    return {
+      data: users,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   } catch (error) {
     await session.abortTransaction();
     session.endSession();

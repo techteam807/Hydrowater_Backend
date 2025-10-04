@@ -45,9 +45,23 @@ const createTechnicianUsers = async (req, res) => {
 
 const fetchAllUsers = async (req, res) => {
   try {
-    const { userType } = req.query;
-    const users = await userService.getAllUsers(userType);
-    return successResponse(res, users, "Users Fetched!", 200);
+    const { userType, search, userParentType, userParentId, page, limit } =
+      req.query;
+    const users = await userService.getAllUsers({
+      userType,
+      search,
+      userParentType,
+      userParentId,
+      page,
+      limit,
+    });
+    return successResponse(
+      res,
+      users.data,
+      "Users Fetched!",
+      200,
+      users.pagination
+    );
   } catch (error) {
     return errorResponse(
       res,
@@ -57,4 +71,4 @@ const fetchAllUsers = async (req, res) => {
   }
 };
 
-module.exports = { createAdminUsers, createTechnicianUsers,fetchAllUsers };
+module.exports = { createAdminUsers, createTechnicianUsers, fetchAllUsers };
