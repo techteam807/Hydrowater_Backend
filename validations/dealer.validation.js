@@ -18,10 +18,10 @@ const createDealerValidation = Joi.object({
       "string.pattern.base":
         "Mobile number must be 10 digits (optional +91 country code)",
     }),
-  address: Joi.string().optional(),
-  city: Joi.string().optional(),
-  state: Joi.string().optional(),
-  country: Joi.string().optional(),
+  address: Joi.string().allow(null, ""),
+  city: Joi.string().allow(null, ""),
+  state: Joi.string().allow(null, ""),
+  country: Joi.string().allow(null, ""),
   distributorId: Joi.string().required().messages({
     "string.empty": "Dealer distributorId is required",
   }),
