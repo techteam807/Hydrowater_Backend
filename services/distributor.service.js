@@ -189,9 +189,82 @@ const distributorDropDown = async () => {
   }
 };
 
+const distributorUpdate = async (distributorId, distributorData) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const distributorFind = await Distributor.findById(distributorId).session(
+      session
+    );
+    if (!distributorFind) {
+      throw new Error("Distributor Not Found");
+    }
+
+    const distributor = await Distributor.findByIdAndUpdate(
+      distributorId,
+      distributorData,
+      {
+        new: true,
+        runValidators: true,
+        session,
+      }
+    );
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return distributor;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+
+const deleteDistributor = async (distributorId) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const distributorFind = await Distributor.findById(distributorId).session(
+      session
+    );
+    
+    if (!distributorFind) {
+      throw new Error("Distributor Not Found");
+    }
+
+    if(distributorFind.isActive = false)
+    {
+      throw new Error("Distributor Alredy Deleted");
+    }
+
+    const distributor = await Distributor.findByIdAndUpdate(
+      distributorId,
+      { isActive: false },
+      {
+        new: true,
+        runValidators: true,
+        session,
+      }
+    );
+
+    await session.commitTransaction();
+    session.endSession();
+    return distributor;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+
 module.exports = {
   generateDistributor,
   getDistributor,
   getDistributors,
   distributorDropDown,
+  distributorUpdate,
+  deleteDistributor,
 };

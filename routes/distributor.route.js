@@ -9,5 +9,7 @@ router.post("/createDistributor", authToken, validate(createDistributorValidatio
 router.get("/getDistributor", distributorController.fetchDistributor);
 router.get("/getDistributors", distributorController.fetchDistributors);
 router.get("/getDistributorsDropdown", distributorController.fetchDistributorDropDown);
+router.put("/updateDistributor/:distributorId", authToken, distributorController.editDistributor);
+router.put("/deleteDistributor/:distributorId", authToken, distributorController.deleteDistributor);
 
 module.exports = router;

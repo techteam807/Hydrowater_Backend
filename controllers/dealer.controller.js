@@ -79,9 +79,32 @@ const fetchDealerDropDown = async (req, res) => {
   }
 };
 
+const editDealer = async (req, res) => {
+  try {
+    const { dealerId } = req.params;
+    const dealerData = req.body;
+    const result = await dealerService.updateDealer(dealerId, dealerData);
+    return successResponse(res, result, "Dealer Update Successfully", 200);
+  } catch (error) {
+    return errorResponse(res, error.message || "Error While Updating Dealer", 500);
+  }
+};
+
+const deleteDealer = async (req, res) => {
+  try {
+    const { dealerId } = req.params;
+    const result = await dealerService.deleteDealer(dealerId);
+    return successResponse(res, result, "Dealer Deleted Successfully");
+  } catch (error) {
+    return errorResponse(res, error.message || "Error while Deleting Dealer");
+  }
+};
+
 module.exports = {
   createDealer,
   fetchDealer,
   fetchDealers,
   fetchDealerDropDown,
+  editDealer,
+  deleteDealer,
 };

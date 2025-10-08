@@ -122,4 +122,72 @@ const getAllUsers = async ({
   }
 };
 
-module.exports = { genrateAdminUsers, genrateTechnicianUsers, getAllUsers };
+const updateTechnician = async (technicianId, userData) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const technicianFind = await User.findById(technicianId).session(session);
+
+    if (!technicianFind) {
+      throw new Error("Technicaian Not Found");
+    }
+
+    const technician = await User.findByIdAndUpdate(technicianId, userData, {
+      new: true,
+      runValidators: true,
+      session,
+    });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return technician;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+const deleteTechnician = async (technicianId) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const technicianFind = await User.findById(technicianId).session(session);
+    
+    if (!technicianFind) {
+      throw new Error("Technician Not Found");
+    }
+
+    if ((technicianFind.isActive = false)) {
+      throw new Error("Technician Alredy Deleted");
+    }
+
+    const technician = await User.findByIdAndUpdate(
+      technicianId,
+      { isActive: false },
+      {
+        new: true,
+        runValidators: true,
+        session,
+      }
+    );
+
+    await session.commitTransaction();
+    session.endSession();
+    return technician;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+
+module.exports = {
+  genrateAdminUsers,
+  genrateTechnicianUsers,
+  getAllUsers,
+  updateTechnician,
+  deleteTechnician,
+};

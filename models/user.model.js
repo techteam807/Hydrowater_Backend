@@ -15,6 +15,7 @@ const UserSchema = new mongoose.Schema(
     userParentType: { type: String },
     otp: { type: String },
     otpExpires: { type: Date },
+    isActive: {type:Boolean, default: true}
   },
   { timestamps: true }
 );

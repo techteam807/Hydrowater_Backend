@@ -9,6 +9,7 @@ router.post("/createDealer", authToken, validate(createDealerValidation), dealer
 router.get("/getDealer", dealerController.fetchDealer);
 router.get("/getDealers", dealerController.fetchDealers);
 router.get("/getDealersDropdown", dealerController.fetchDealerDropDown);
-
+router.put("/updateDealer/:dealerId", authToken, dealerController.editDealer);
+router.put("/deleteDealer/:dealerId", authToken, dealerController.deleteDealer);
 
 module.exports = router;

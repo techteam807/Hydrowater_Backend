@@ -8,4 +8,7 @@ const authToken = require("../middlewares/authToken");
 router.post("/createAdminUsers", validate(adminValidation), userController.createAdminUsers);
 router.post("/createTechnicianUsers", authToken, validate(technicianValidation), userController.createTechnicianUsers);
 router.get("/getAllUsers", userController.fetchAllUsers);
+router.put("/updateTechnician/:technicianId", authToken, userController.editTechnician);
+router.put("/deleteTechnician/:technicianId", authToken, userController.deleteTechnician);
+
 module.exports = router;

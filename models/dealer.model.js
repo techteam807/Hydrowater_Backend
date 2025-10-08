@@ -11,6 +11,7 @@ const DealerSchema = new mongoose.Schema(
     state: { type: String },
     country: { type: String },
     distributorId: { type: mongoose.Schema.Types.ObjectId, ref: "Distributor" },
+    isActive: {type:Boolean, default: true}
   },
   { timestamps: true }
 );

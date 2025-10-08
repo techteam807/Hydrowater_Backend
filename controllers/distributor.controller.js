@@ -97,9 +97,32 @@ const fetchDistributorDropDown = async (req, res) => {
   }
 };
 
+const editDistributor = async (req, res) => {
+  try {
+    const { distributorId } = req.params;
+    const distributorData = req.body;
+    const result = await distributorService.distributorUpdate(distributorId, distributorData)
+    return successResponse(res, result, "Distributor Update Successfully", 200);
+  } catch (error) {
+    return errorResponse(res, error.message || "Error While Updating Distributor" , 500);
+  }
+};
+
+const deleteDistributor = async (req, res) => {
+  try {
+    const { distributorId } = req.params;
+    const result = await distributorService.deleteDistributor(distributorId);
+    return successResponse(res, result, "Distributor Deleted Successfully");
+  } catch (error) {
+    return errorResponse(res, error.message || "Error while Deleting Distributor");
+  }
+};
+
 module.exports = {
   CreateDistributor,
   fetchDistributor,
   fetchDistributors,
   fetchDistributorDropDown,
+  editDistributor,
+  deleteDistributor,
 };

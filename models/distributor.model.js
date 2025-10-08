@@ -10,7 +10,8 @@ const DistributorSchema = new mongoose.Schema(
     city: { type: String },
     state: { type: String },
     country: { type: String },
-    userId: {type: mongoose.Schema.Types.ObjectId, ref: "User"}
+    userId: {type: mongoose.Schema.Types.ObjectId, ref: "User"},
+    isActive: {type:Boolean, default: true}
   },
   { timestamps: true }
 );

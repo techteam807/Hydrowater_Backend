@@ -71,4 +71,25 @@ const fetchAllUsers = async (req, res) => {
   }
 };
 
-module.exports = { createAdminUsers, createTechnicianUsers, fetchAllUsers };
+const editTechnician = async (req, res) => {
+  try {
+    const { technicianId } = req.params;
+    const userData = req.body;
+    const result = await userService.updateTechnician(technicianId, userData);
+    return successResponse(res, result, "Technicaian Update successfully");
+  } catch (error) {
+    return errorResponse(res, error.message || "Error While Updating Technicaian", 500);
+  }
+};
+
+const deleteTechnician = async (req, res) => {
+  try {
+    const { technicianId } = req.params;
+    const result = await userService.deleteTechnician(technicianId);
+    return successResponse(res, result, "Technician Deleted Successfully");
+  } catch (error) {
+    return errorResponse(res, error.message || "Error while Deleting Technician");
+  }
+};
+
+module.exports = { createAdminUsers, createTechnicianUsers, fetchAllUsers, editTechnician, deleteTechnician };

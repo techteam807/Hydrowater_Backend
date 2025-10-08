@@ -185,4 +185,74 @@ const dealerDropDown = async (distributorId = null) => {
   }
 };
 
-module.exports = { generateDealer, getDealer, getDealers, dealerDropDown };
+const updateDealer = async (dealerId, dealerData) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const dealerFind = await Dealer.findById(dealerId).session(session);
+    if (!dealerFind) {
+      throw new Error("Dealer Not Found");
+    }
+
+    const dealer = await Dealer.findByIdAndUpdate(dealerId, dealerData, {
+      new: true,
+      runValidators: true,
+      session,
+    });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return dealer;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+
+const deleteDealer = async (dealerId) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const dealerFind = await Dealer.findById(dealerId).session(session);
+    
+    if (!dealerFind) {
+      throw new Error("Dealer Not Found");
+    }
+
+    if(dealerFind.isActive = false)
+    {
+      throw new Error("Dealer Alredy Deleted");
+    }
+
+    const dealer = await Dealer.findByIdAndUpdate(
+      dealerId,
+      { isActive: false },
+      {
+        new: true,
+        runValidators: true,
+        session,
+      }
+    );
+
+    await session.commitTransaction();
+    session.endSession();
+    return dealer;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+
+module.exports = {
+  generateDealer,
+  getDealer,
+  getDealers,
+  dealerDropDown,
+  updateDealer,
+  deleteDealer,
+};
