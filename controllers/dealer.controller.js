@@ -8,7 +8,7 @@ const createDealer = async (req, res) => {
     const dealer = await dealerService.generateDealer(userId, dealerData);
     return successResponse(res, dealer, "Dealer Created successfully", 200);
   } catch (error) {
-    return errorResponse(res, error.message || "Error While Creating Dealer");
+    return errorResponse(res, error.message || "Error While Creating Dealer", 400);
   }
 };
 
@@ -18,7 +18,7 @@ const fetchDealer = async (req, res) => {
     const dealer = await dealerService.getDealer(dealerId);
     return successResponse(res, dealer, "Dealer Fetched!", 200);
   } catch (error) {
-    return errorResponse(res, error.message || "Error While Get Dealer");
+    return errorResponse(res, error.message || "Error While Get Dealer", 400);
   }
 };
 
@@ -61,7 +61,7 @@ const fetchDealers = async (req, res) => {
       dealers.pagination
     );
   } catch (error) {
-    return errorResponse(res, error.message || "Error While Get Dealers");
+    return errorResponse(res, error.message || "Error While Get Dealers", 400);
   }
 };
 
@@ -74,7 +74,7 @@ const fetchDealerDropDown = async (req, res) => {
     return errorResponse(
       res,
       error.message || "Error While Get Dropdown Of Dealers",
-      500
+      400
     );
   }
 };
@@ -86,7 +86,7 @@ const editDealer = async (req, res) => {
     const result = await dealerService.updateDealer(dealerId, dealerData);
     return successResponse(res, result, "Dealer Update Successfully", 200);
   } catch (error) {
-    return errorResponse(res, error.message || "Error While Updating Dealer", 500);
+    return errorResponse(res, error.message || "Error While Updating Dealer", 400);
   }
 };
 
@@ -96,7 +96,7 @@ const deleteDealer = async (req, res) => {
     const result = await dealerService.deleteDealer(dealerId);
     return successResponse(res, result, "Dealer Deleted Successfully");
   } catch (error) {
-    return errorResponse(res, error.message || "Error while Deleting Dealer");
+    return errorResponse(res, error.message || "Error while Deleting Dealer", 400);
   }
 };
 

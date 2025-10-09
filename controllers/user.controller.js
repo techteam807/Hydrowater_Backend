@@ -15,7 +15,7 @@ const createAdminUsers = async (req, res) => {
     return errorResponse(
       res,
       error.message || "Error While Creating A User!",
-      500
+      400
     );
   }
 };
@@ -38,7 +38,7 @@ const createTechnicianUsers = async (req, res) => {
     return errorResponse(
       res,
       error.message || "Error While Creating A User!",
-      500
+      400
     );
   }
 };
@@ -93,7 +93,7 @@ const fetchTechnicians = async (req, res) => {
     return errorResponse(
       res,
       error.message || "Error While Fetching Technicians",
-      500
+      400
     );
   }
 };
@@ -105,7 +105,7 @@ const editTechnician = async (req, res) => {
     const result = await userService.updateTechnician(technicianId, userData);
     return successResponse(res, result, "Technicaian Update successfully");
   } catch (error) {
-    return errorResponse(res, error.message || "Error While Updating Technicaian", 500);
+    return errorResponse(res, error.message || "Error While Updating Technicaian", 400);
   }
 };
 
@@ -115,7 +115,7 @@ const deleteTechnician = async (req, res) => {
     const result = await userService.deleteTechnician(technicianId);
     return successResponse(res, result, "Technician Deleted Successfully");
   } catch (error) {
-    return errorResponse(res, error.message || "Error while Deleting Technician");
+    return errorResponse(res, error.message || "Error while Deleting Technician", 400);
   }
 };
 

@@ -19,7 +19,8 @@ const CreateDistributor = async (req, res) => {
   } catch (error) {
     return errorResponse(
       res,
-      error.message || "Error While Creating Distributor"
+      error.message || "Error While Creating Distributor",
+      400
     );
   }
 };
@@ -33,7 +34,7 @@ const fetchDistributor = async (req, res) => {
     return errorResponse(
       res,
       error.message || "Error While Get Distributor",
-      500
+      400
     );
   }
 };
@@ -75,7 +76,7 @@ const fetchDistributors = async (req, res) => {
       distributors.pagination
     );
   } catch (error) {
-    return errorResponse(res, error.message || "Error While Get Distributors");
+    return errorResponse(res, error.message || "Error While Get Distributors", 400);
   }
 };
 
@@ -92,7 +93,7 @@ const fetchDistributorDropDown = async (req, res) => {
     return errorResponse(
       res,
       error.message || "Error While Get Dropdown Of Distributors",
-      500
+      400
     );
   }
 };
@@ -104,7 +105,7 @@ const editDistributor = async (req, res) => {
     const result = await distributorService.distributorUpdate(distributorId, distributorData)
     return successResponse(res, result, "Distributor Update Successfully", 200);
   } catch (error) {
-    return errorResponse(res, error.message || "Error While Updating Distributor" , 500);
+    return errorResponse(res, error.message || "Error While Updating Distributor" , 400);
   }
 };
 
@@ -114,7 +115,7 @@ const deleteDistributor = async (req, res) => {
     const result = await distributorService.deleteDistributor(distributorId);
     return successResponse(res, result, "Distributor Deleted Successfully");
   } catch (error) {
-    return errorResponse(res, error.message || "Error while Deleting Distributor");
+    return errorResponse(res, error.message || "Error while Deleting Distributor", 400);
   }
 };
 
