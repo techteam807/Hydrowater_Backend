@@ -39,4 +39,15 @@ const technicianValidation = Joi.object({
   }),
 });
 
-module.exports = { adminValidation, technicianValidation };
+const updateTechnicianValidation = Joi.object({
+  name: Joi.string().trim().optional(),mobile_number: Joi.string()
+    .pattern(/^(\+91)?[0-9]{10}$/)
+    .optional()
+    .messages({
+      "string.empty": "Mobile number is required",
+      "string.pattern.base":
+        "Mobile number must be 10 digits (optional +91 country code)",
+    }),
+}).min(1);
+
+module.exports = { adminValidation, technicianValidation, updateTechnicianValidation };

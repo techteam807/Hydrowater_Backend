@@ -149,6 +149,7 @@ const updateTechnician = async (technicianId, userData) => {
     throw error;
   }
 };
+
 const deleteTechnician = async (technicianId) => {
   const session = await mongoose.startSession();
   session.startTransaction();

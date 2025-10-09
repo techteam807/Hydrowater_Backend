@@ -27,4 +27,22 @@ const createDealerValidation = Joi.object({
   }),
 });
 
-module.exports = { createDealerValidation };
+const updateDealerValidation = Joi.object({
+  company_name: Joi.string().trim().optional(),
+  name: Joi.string().trim().optional(),
+  email: Joi.string().email().optional(),
+  mobile_number: Joi.string()
+    .pattern(/^(\+91)?[0-9]{10}$/)
+    .optional()
+    .messages({
+      "string.empty": "Mobile number is required",
+      "string.pattern.base":
+        "Mobile number must be 10 digits (optional +91 country code)",
+    }),
+  address: Joi.string().trim().optional(),
+  city: Joi.string().trim().optional(),
+  state: Joi.string().trim().optional(),
+  country: Joi.string().trim().optional(),
+}).min(1);
+
+module.exports = { createDealerValidation, updateDealerValidation };
