@@ -138,6 +138,10 @@ const getDealers = async ({
     const skip = (page - 1) * limit;
 
     const dealers = await Dealer.find(query)
+      .populate({
+        path:"distributorId",
+        select:"name company_name"
+      })
       .skip(skip)
       .limit(limit)
       .session(session);

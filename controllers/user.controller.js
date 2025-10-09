@@ -71,6 +71,33 @@ const fetchAllUsers = async (req, res) => {
   }
 };
 
+const fetchTechnicians = async (req, res) => {
+  try {
+    const { search, userParentType, userParentId, page, limit } =
+      req.query;
+    const users = await userService.getTechnicians({
+      search,
+      userParentType,
+      userParentId,
+      page,
+      limit,
+    });
+    return successResponse(
+      res,
+      users.data,
+      "Technicians Fetched!",
+      200,
+      users.pagination
+    );
+  } catch (error) {
+    return errorResponse(
+      res,
+      error.message || "Error While Fetching Technicians",
+      500
+    );
+  }
+};
+
 const editTechnician = async (req, res) => {
   try {
     const { technicianId } = req.params;
@@ -92,4 +119,4 @@ const deleteTechnician = async (req, res) => {
   }
 };
 
-module.exports = { createAdminUsers, createTechnicianUsers, fetchAllUsers, editTechnician, deleteTechnician };
+module.exports = { createAdminUsers, createTechnicianUsers, fetchAllUsers, editTechnician, deleteTechnician, fetchTechnicians };

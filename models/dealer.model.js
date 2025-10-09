@@ -6,10 +6,13 @@ const DealerSchema = new mongoose.Schema(
     name: { type: String },
     email: { type: String },
     mobile_number: { type: String },
-    address: { type: String },
-    city: { type: String },
-    state: { type: String },
-    country: { type: String },
+address: {
+    line1: { type: String, required: true },
+    line2: { type: String },
+    city: { type: String, required: true },
+    state: { type: String, required: true },
+  },
+    country: { type: String, default: "India" },
     distributorId: { type: mongoose.Schema.Types.ObjectId, ref: "Distributor" },
     isActive: {type:Boolean, default: true}
   },

@@ -12,24 +12,24 @@ const loginAdminValidation = Joi.object({
 });
 
 const loginTechnicianValidation = Joi.object({
-  mobile_number: Joi.string()
-    .pattern(/^(\+91)?[0-9]{10}$/)
+mobile_number: Joi.string()
+    .pattern(/^[0-9]{10}$/)
     .required()
     .messages({
       "string.empty": "Mobile number is required",
       "string.pattern.base":
-        "Mobile number must be 10 digits (optional +91 country code)",
+        "Mobile number must be 10 digits",
     }),
 });
 
 const verifyOtpValidation = Joi.object({
   mobile_number: Joi.string()
-    .pattern(/^(\+91)?[0-9]{10}$/)
+    .pattern(/^[0-9]{10}$/)
     .required()
     .messages({
       "string.empty": "Mobile number is required",
       "string.pattern.base":
-        "Mobile number must be 10 digits (optional +91 country code)",
+        "Mobile number must be 10 digits",
     }),
   otp: Joi.string()
     .pattern(/^[0-9]{6}$/)

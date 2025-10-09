@@ -23,12 +23,12 @@ const technicianValidation = Joi.object({
     "string.empty": "Name is required",
   }),
   mobile_number: Joi.string()
-    .pattern(/^(\+91)?[0-9]{10}$/)
+    .pattern(/^[0-9]{10}$/)
     .required()
     .messages({
       "string.empty": "Mobile number is required",
       "string.pattern.base":
-        "Mobile number must be 10 digits (optional +91 country code)",
+        "Mobile number must be 10 digits",
     }),
   userRole: Joi.string()
     .valid(UserRoleEnum.TECHNICIAN, UserRoleEnum.SUPERTECHNICIAN)
@@ -40,13 +40,14 @@ const technicianValidation = Joi.object({
 });
 
 const updateTechnicianValidation = Joi.object({
-  name: Joi.string().trim().optional(),mobile_number: Joi.string()
-    .pattern(/^(\+91)?[0-9]{10}$/)
+  name: Joi.string().trim().optional(),
+  mobile_number: Joi.string()
+    .pattern(/^[0-9]{10}$/)
     .optional()
     .messages({
       "string.empty": "Mobile number is required",
       "string.pattern.base":
-        "Mobile number must be 10 digits (optional +91 country code)",
+        "Mobile number must be 10 digits",
     }),
 }).min(1);
 

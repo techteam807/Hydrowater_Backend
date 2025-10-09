@@ -122,6 +122,63 @@ const getAllUsers = async ({
   }
 };
 
+const getTechnicians = async ({
+  search = "",
+  userParentType,
+  userParentId,
+  page = 1,
+  limit = 10,
+}) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    let query = {};
+    if (search) {
+      query.$or = [
+        { mobile_number: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+        { name: { $regex: search, $options: "i" } },
+      ];
+    }
+
+      query.userRole = UserRoleEnum.TECHNICIAN || UserRoleEnum.SUPERTECHNICIAN;
+
+    if (userParentId) query.userParentId = userParentId;
+    if (userParentType) query.userParentType = userParentType;
+
+    const skip = (page - 1) * limit;
+
+    const users = await User.find(query)
+      .skip(skip)
+      .limit(limit)
+      .session(session);
+
+    const total = await User.countDocuments(query).session(session);
+
+    if (users && users.password) {
+      users.password = decryptPassword(users.password);
+    }
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return {
+      data: users,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+
 const updateTechnician = async (technicianId, userData) => {
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -189,6 +246,7 @@ module.exports = {
   genrateAdminUsers,
   genrateTechnicianUsers,
   getAllUsers,
+  getTechnicians,
   updateTechnician,
   deleteTechnician,
 };
