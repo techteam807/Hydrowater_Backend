@@ -135,8 +135,8 @@ const getDistributors = async ({
       ];
     }
 
-    if (city) query.city = { $in: city };
-    if (state) query.state = { $in: state };
+    if (city) query["address.city"] = { $in: city };
+    if (state) query["address.state"] = { $in: state };
     if (country) query.country = { $in: country };
 
     // if (filters && Object.keys(filters).length > 0) {
@@ -230,13 +230,12 @@ const deleteDistributor = async (distributorId) => {
     const distributorFind = await Distributor.findById(distributorId).session(
       session
     );
-    
+
     if (!distributorFind) {
       throw new Error("Distributor Not Found");
     }
 
-    if(distributorFind.isActive = false)
-    {
+    if ((distributorFind.isActive = false)) {
       throw new Error("Distributor Alredy Deleted");
     }
 

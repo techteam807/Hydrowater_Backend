@@ -126,8 +126,8 @@ const getDealers = async ({
       ];
     }
 
-    if (city) query.city = { $in: city };
-    if (state) query.state = { $in: state };
+    if (city) query["address.city"] = { $in: city };
+    if (state) query["address.state"] = { $in: state };
     if (country) query.country = { $in: country };
     if (distributorId) query.distributorId = distributorId;
 
@@ -139,8 +139,8 @@ const getDealers = async ({
 
     const dealers = await Dealer.find(query)
       .populate({
-        path:"distributorId",
-        select:"name company_name"
+        path: "distributorId",
+        select: "name company_name",
       })
       .skip(skip)
       .limit(limit)
@@ -222,13 +222,12 @@ const deleteDealer = async (dealerId) => {
 
   try {
     const dealerFind = await Dealer.findById(dealerId).session(session);
-    
+
     if (!dealerFind) {
       throw new Error("Dealer Not Found");
     }
 
-    if(dealerFind.isActive = false)
-    {
+    if ((dealerFind.isActive = false)) {
       throw new Error("Dealer Alredy Deleted");
     }
 
