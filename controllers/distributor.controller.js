@@ -41,7 +41,7 @@ const fetchDistributor = async (req, res) => {
 
 const fetchDistributors = async (req, res) => {
   try {
-    const { search, city, state, country, page, limit } = req.query;
+    const { search, city, state, country, page, limit, isActive } = req.query;
     // let filters = {};
 
     // if (req.query.filters) {
@@ -67,6 +67,7 @@ const fetchDistributors = async (req, res) => {
       // filters,
       page,
       limit,
+      isActive,
     });
     return successResponse(
       res,
@@ -76,7 +77,11 @@ const fetchDistributors = async (req, res) => {
       distributors.pagination
     );
   } catch (error) {
-    return errorResponse(res, error.message || "Error While Get Distributors", 400);
+    return errorResponse(
+      res,
+      error.message || "Error While Get Distributors",
+      400
+    );
   }
 };
 
@@ -102,10 +107,17 @@ const editDistributor = async (req, res) => {
   try {
     const { distributorId } = req.params;
     const distributorData = req.body;
-    const result = await distributorService.distributorUpdate(distributorId, distributorData)
+    const result = await distributorService.distributorUpdate(
+      distributorId,
+      distributorData
+    );
     return successResponse(res, result, "Distributor Update Successfully", 200);
   } catch (error) {
-    return errorResponse(res, error.message || "Error While Updating Distributor" , 400);
+    return errorResponse(
+      res,
+      error.message || "Error While Updating Distributor",
+      400
+    );
   }
 };
 
@@ -115,7 +127,11 @@ const deleteDistributor = async (req, res) => {
     const result = await distributorService.deleteDistributor(distributorId);
     return successResponse(res, result, "Distributor Deleted Successfully");
   } catch (error) {
-    return errorResponse(res, error.message || "Error while Deleting Distributor", 400);
+    return errorResponse(
+      res,
+      error.message || "Error while Deleting Distributor",
+      400
+    );
   }
 };
 

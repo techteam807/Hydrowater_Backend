@@ -15,26 +15,25 @@ const createDealerValidation = Joi.object({
     .required()
     .messages({
       "string.empty": "Mobile number is required",
-      "string.pattern.base":
-        "Mobile number must be 10 digits",
+      "string.pattern.base": "Mobile number must be 10 digits",
     }),
   address: Joi.object({
-  line1: Joi.string().trim().required().messages({
-    "string.empty": "Address line 1 is required",
-  }),
-  line2: Joi.string().trim().optional(),
-  city: Joi.string().trim().required().messages({
-    "string.empty": "City is required",
-  }),
-  state: Joi.string().trim().required().messages({
-    "string.empty": "State is required",
-  }),
-})
-  .required()
-  .messages({
-    "object.base": "Address must be an object with line1, city, and state",
-  }),
-   country: Joi.string().trim().optional(),
+    line1: Joi.string().trim().required().messages({
+      "string.empty": "Address line 1 is required",
+    }),
+    line2: Joi.string().trim().optional(),
+    city: Joi.string().trim().required().messages({
+      "string.empty": "City is required",
+    }),
+    state: Joi.string().trim().required().messages({
+      "string.empty": "State is required",
+    }),
+  })
+    .required()
+    .messages({
+      "object.base": "Address must be an object with line1, city, and state",
+    }),
+  country: Joi.string().trim().optional(),
   distributorId: Joi.string().required().messages({
     "string.empty": "Dealer distributorId is required",
   }),
@@ -49,26 +48,28 @@ const updateDealerValidation = Joi.object({
     .optional()
     .messages({
       "string.empty": "Mobile number is required",
-      "string.pattern.base":
-        "Mobile number must be 10 digits",
+      "string.pattern.base": "Mobile number must be 10 digits",
     }),
-address: Joi.object({
-  line1: Joi.string().trim().required().messages({
-    "string.empty": "Address line 1 is required",
-  }),
-  line2: Joi.string().trim().optional(),
-  city: Joi.string().trim().required().messages({
-    "string.empty": "City is required",
-  }),
-  state: Joi.string().trim().required().messages({
-    "string.empty": "State is required",
-  }),
-})
-  .required()
-  .messages({
-    "object.base": "Address must be an object with line1, city, and state",
-  }),
+  address: Joi.object({
+    line1: Joi.string().trim().required().messages({
+      "string.empty": "Address line 1 is required",
+    }),
+    line2: Joi.string().trim().optional(),
+    city: Joi.string().trim().required().messages({
+      "string.empty": "City is required",
+    }),
+    state: Joi.string().trim().required().messages({
+      "string.empty": "State is required",
+    }),
+  })
+    .required()
+    .messages({
+      "object.base": "Address must be an object with line1, city, and state",
+    }),
   country: Joi.string().trim().optional(),
+  distributorId: Joi.string().optional().messages({
+    "string.empty": "Dealer distributorId is required",
+  }),
 }).min(1);
 
 module.exports = { createDealerValidation, updateDealerValidation };

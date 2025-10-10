@@ -120,6 +120,7 @@ const getDistributors = async ({
   // filters = {},
   page = 1,
   limit = 10,
+  isActive,
 }) => {
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -138,6 +139,7 @@ const getDistributors = async ({
     if (city) query["address.city"] = { $in: city };
     if (state) query["address.state"] = { $in: state };
     if (country) query.country = { $in: country };
+    if (isActive) query.isActive = isActive;
 
     // if (filters && Object.keys(filters).length > 0) {
     //   query = { ...query, ...filters };

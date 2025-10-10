@@ -128,6 +128,7 @@ const getTechnicians = async ({
   userParentId,
   page = 1,
   limit = 10,
+  isActive,
 }) => {
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -142,10 +143,11 @@ const getTechnicians = async ({
       ];
     }
 
-      query.userRole = UserRoleEnum.TECHNICIAN || UserRoleEnum.SUPERTECHNICIAN;
+    query.userRole = UserRoleEnum.TECHNICIAN || UserRoleEnum.SUPERTECHNICIAN;
 
     if (userParentId) query.userParentId = userParentId;
     if (userParentType) query.userParentType = userParentType;
+    if (isActive) query.isActive = isActive;
 
     const skip = (page - 1) * limit;
 
@@ -213,7 +215,7 @@ const deleteTechnician = async (technicianId) => {
 
   try {
     const technicianFind = await User.findById(technicianId).session(session);
-    
+
     if (!technicianFind) {
       throw new Error("Technician Not Found");
     }

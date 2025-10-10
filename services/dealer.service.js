@@ -111,6 +111,7 @@ const getDealers = async ({
   // filters = {},
   page = 1,
   limit = 10,
+  isActive,
 }) => {
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -130,6 +131,7 @@ const getDealers = async ({
     if (state) query["address.state"] = { $in: state };
     if (country) query.country = { $in: country };
     if (distributorId) query.distributorId = distributorId;
+    if (isActive) query.isActive = isActive;
 
     // if (filters && Object.keys(filters).length > 0) {
     //   query = { ...query, ...filters };

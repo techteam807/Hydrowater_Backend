@@ -8,7 +8,11 @@ const createDealer = async (req, res) => {
     const dealer = await dealerService.generateDealer(userId, dealerData);
     return successResponse(res, dealer, "Dealer Created successfully", 200);
   } catch (error) {
-    return errorResponse(res, error.message || "Error While Creating Dealer", 400);
+    return errorResponse(
+      res,
+      error.message || "Error While Creating Dealer",
+      400
+    );
   }
 };
 
@@ -24,8 +28,16 @@ const fetchDealer = async (req, res) => {
 
 const fetchDealers = async (req, res) => {
   try {
-    const { search, city, state, country, distributorId, page, limit } =
-      req.query;
+    const {
+      search,
+      city,
+      state,
+      country,
+      distributorId,
+      page,
+      limit,
+      isActive,
+    } = req.query;
     // let filters = {};
 
     // if (req.query.filters) {
@@ -52,6 +64,7 @@ const fetchDealers = async (req, res) => {
       // filters,
       page,
       limit,
+      isActive,
     });
     return successResponse(
       res,
@@ -86,7 +99,11 @@ const editDealer = async (req, res) => {
     const result = await dealerService.updateDealer(dealerId, dealerData);
     return successResponse(res, result, "Dealer Update Successfully", 200);
   } catch (error) {
-    return errorResponse(res, error.message || "Error While Updating Dealer", 400);
+    return errorResponse(
+      res,
+      error.message || "Error While Updating Dealer",
+      400
+    );
   }
 };
 
@@ -96,7 +113,11 @@ const deleteDealer = async (req, res) => {
     const result = await dealerService.deleteDealer(dealerId);
     return successResponse(res, result, "Dealer Deleted Successfully");
   } catch (error) {
-    return errorResponse(res, error.message || "Error while Deleting Dealer", 400);
+    return errorResponse(
+      res,
+      error.message || "Error while Deleting Dealer",
+      400
+    );
   }
 };
 

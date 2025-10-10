@@ -73,7 +73,7 @@ const fetchAllUsers = async (req, res) => {
 
 const fetchTechnicians = async (req, res) => {
   try {
-    const { search, userParentType, userParentId, page, limit } =
+    const { search, userParentType, userParentId, page, limit, isActive } =
       req.query;
     const users = await userService.getTechnicians({
       search,
@@ -81,6 +81,7 @@ const fetchTechnicians = async (req, res) => {
       userParentId,
       page,
       limit,
+      isActive,
     });
     return successResponse(
       res,
@@ -105,7 +106,11 @@ const editTechnician = async (req, res) => {
     const result = await userService.updateTechnician(technicianId, userData);
     return successResponse(res, result, "Technicaian Update successfully");
   } catch (error) {
-    return errorResponse(res, error.message || "Error While Updating Technicaian", 400);
+    return errorResponse(
+      res,
+      error.message || "Error While Updating Technicaian",
+      400
+    );
   }
 };
 
@@ -115,8 +120,19 @@ const deleteTechnician = async (req, res) => {
     const result = await userService.deleteTechnician(technicianId);
     return successResponse(res, result, "Technician Deleted Successfully");
   } catch (error) {
-    return errorResponse(res, error.message || "Error while Deleting Technician", 400);
+    return errorResponse(
+      res,
+      error.message || "Error while Deleting Technician",
+      400
+    );
   }
 };
 
-module.exports = { createAdminUsers, createTechnicianUsers, fetchAllUsers, editTechnician, deleteTechnician, fetchTechnicians };
+module.exports = {
+  createAdminUsers,
+  createTechnicianUsers,
+  fetchAllUsers,
+  editTechnician,
+  deleteTechnician,
+  fetchTechnicians,
+};
