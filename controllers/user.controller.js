@@ -128,6 +128,19 @@ const deleteTechnician = async (req, res) => {
   }
 };
 
+const fetchCountOfUsers = async (req, res) => {
+  try {
+    const result = await userService.getUserCount();
+    return successResponse(res, result, "Users Count Successfully");
+  } catch (error) {
+    return errorResponse(
+      res,
+      error.message || "Error while Fetching Users Count",
+      400
+    );
+  }
+};
+
 module.exports = {
   createAdminUsers,
   createTechnicianUsers,
@@ -135,4 +148,5 @@ module.exports = {
   editTechnician,
   deleteTechnician,
   fetchTechnicians,
+  fetchCountOfUsers,
 };

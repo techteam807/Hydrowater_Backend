@@ -244,6 +244,30 @@ const deleteTechnician = async (technicianId) => {
   }
 };
 
+const getUserCount = async () => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const [technicianCount, distributorCount, dealerCount] = await Promise.all([
+      User.countDocuments({ userRole: UserRoleEnum.TECHNICIAN, isActive:true }).session(session),
+      User.countDocuments({ userRole: UserRoleEnum.DISTRIBUTOR, isActive:true }).session(session),
+      User.countDocuments({ userRole: UserRoleEnum.DEALER, isActive:true }).session(session)
+    ]);
+
+    const response = { technician: technicianCount, distributor: distributorCount, dealer: dealerCount };
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return response;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+
 module.exports = {
   genrateAdminUsers,
   genrateTechnicianUsers,
@@ -251,4 +275,5 @@ module.exports = {
   getTechnicians,
   updateTechnician,
   deleteTechnician,
+  getUserCount,
 };
