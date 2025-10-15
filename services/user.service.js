@@ -1,5 +1,7 @@
 const { default: mongoose } = require("mongoose");
 const User = require("../models/user.model");
+const Distributor = require("../models/distributor.model");
+const Dealer = require("../models/dealer.model");
 const { UserRoleEnum } = require("../utils/global");
 const { decryptPassword, encryptPassword } = require("../utils/encryption");
 
@@ -247,28 +249,31 @@ const deleteTechnician = async (technicianId) => {
 };
 
 const getUserCount = async () => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
-
   try {
+    // Run all counts in parallel for efficiency
     const [technicianCount, distributorCount, dealerCount] = await Promise.all([
-      User.countDocuments({ userRole: UserRoleEnum.TECHNICIAN, isActive:true }).session(session),
-      User.countDocuments({ userRole: UserRoleEnum.DISTRIBUTOR, isActive:true }).session(session),
-      User.countDocuments({ userRole: UserRoleEnum.DEALER, isActive:true }).session(session)
+      // Count technicians from User model
+      User.countDocuments({ userRole: UserRoleEnum.TECHNICIAN, isActive: true }),
+
+      // Count distributors from Distributor model
+      Distributor.countDocuments({ isActive: true }),
+
+      // Count dealers from Dealer model
+      Dealer.countDocuments({ isActive: true })
     ]);
 
-    const response = { technician: technicianCount, distributor: distributorCount, dealer: dealerCount };
-
-    await session.commitTransaction();
-    session.endSession();
-
-    return response;
+    // Return unified response object
+    return {
+      technician: technicianCount,
+      distributor: distributorCount,
+      dealer: dealerCount
+    };
   } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
+    console.error('Error getting user counts:', error);
     throw error;
   }
 };
+
 
 module.exports = {
   genrateAdminUsers,
