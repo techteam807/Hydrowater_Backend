@@ -149,6 +149,7 @@ const getDistributors = async ({
 
     const distributors = await Distributor.find(query)
       .skip(skip)
+      .sort({createdAt : -1})
       .limit(limit)
       .session(session);
 

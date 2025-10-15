@@ -146,6 +146,7 @@ const getDealers = async ({
       })
       .skip(skip)
       .limit(limit)
+      .sort({createdAt : -1})
       .session(session);
 
     const total = await Dealer.countDocuments(query).session(session);

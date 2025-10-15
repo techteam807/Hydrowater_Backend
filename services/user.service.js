@@ -94,6 +94,7 @@ const getAllUsers = async ({
 
     const users = await User.find(query)
       .skip(skip)
+      .sort({createdAt : -1})
       .limit(limit)
       .session(session);
 
@@ -153,6 +154,7 @@ const getTechnicians = async ({
 
     const users = await User.find(query)
       .skip(skip)
+      .sort({createdAt : -1})
       .limit(limit)
       .session(session);
 
