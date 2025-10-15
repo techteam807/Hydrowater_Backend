@@ -121,6 +121,20 @@ const deleteDealer = async (req, res) => {
   }
 };
 
+const restoreDealer = async (req, res) => {
+  try {
+    const { dealerId } = req.params;
+    const result = await dealerService.restoreDealer(dealerId);
+    return successResponse(res, result, "Dealer Restored Successfully");
+  } catch (error) {
+    return errorResponse(
+      res,
+      error.message || "Error while Restoring Dealer",
+      400
+    );
+  }
+};
+
 module.exports = {
   createDealer,
   fetchDealer,
@@ -128,4 +142,5 @@ module.exports = {
   fetchDealerDropDown,
   editDealer,
   deleteDealer,
+  restoreDealer
 };

@@ -262,6 +262,43 @@ const deleteDistributor = async (distributorId) => {
   }
 };
 
+const restoreDistributor = async (distributorId) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const distributorFind = await Distributor.findById(distributorId).session(
+      session
+    );
+
+    if (!distributorFind) {
+      throw new Error("Distributor Not Found");
+    }
+
+    // if ((distributorFind.isActive = true)) {
+    //   throw new Error("Distributor Alredy Restored");
+    // }
+
+    const distributor = await Distributor.findByIdAndUpdate(
+      distributorId,
+      { isActive: true },
+      {
+        new: true,
+        runValidators: true,
+        session,
+      }
+    );
+
+    await session.commitTransaction();
+    session.endSession();
+    return distributor;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+
 module.exports = {
   generateDistributor,
   getDistributor,
@@ -269,4 +306,5 @@ module.exports = {
   distributorDropDown,
   distributorUpdate,
   deleteDistributor,
+  restoreDistributor
 };

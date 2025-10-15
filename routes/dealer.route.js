@@ -11,5 +11,6 @@ router.get("/getDealers", dealerController.fetchDealers);
 router.get("/getDealersDropdown", dealerController.fetchDealerDropDown);
 router.put("/updateDealer/:dealerId", authToken, validate(updateDealerValidation), dealerController.editDealer);
 router.put("/deleteDealer/:dealerId", authToken, dealerController.deleteDealer);
+router.put("/restoreDealer/:dealerId", authToken, dealerController.restoreDealer);
 
 module.exports = router;

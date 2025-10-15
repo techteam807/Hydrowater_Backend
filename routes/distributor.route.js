@@ -11,5 +11,6 @@ router.get("/getDistributors", distributorController.fetchDistributors);
 router.get("/getDistributorsDropdown", distributorController.fetchDistributorDropDown);
 router.put("/updateDistributor/:distributorId", authToken, validate(updateDistributorValidation), distributorController.editDistributor);
 router.put("/deleteDistributor/:distributorId", authToken, distributorController.deleteDistributor);
+router.put("/restoreDistributor/:distributorId", authToken, distributorController.restoreDistributor);
 
 module.exports = router;

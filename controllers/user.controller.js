@@ -128,6 +128,20 @@ const deleteTechnician = async (req, res) => {
   }
 };
 
+const restoreTechnician = async (req, res) => {
+  try {
+    const { technicianId } = req.params;
+    const result = await userService.restoreTechnician(technicianId);
+    return successResponse(res, result, "Technician Restored Successfully");
+  } catch (error) {
+    return errorResponse(
+      res,
+      error.message || "Error while Restoring Technician",
+      400
+    );
+  }
+};
+
 const fetchCountOfUsers = async (req, res) => {
   try {
     const result = await userService.getUserCount();
@@ -149,4 +163,5 @@ module.exports = {
   deleteTechnician,
   fetchTechnicians,
   fetchCountOfUsers,
+  restoreTechnician
 };

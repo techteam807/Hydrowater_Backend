@@ -254,6 +254,41 @@ const deleteDealer = async (dealerId) => {
   }
 };
 
+const restoreDealer = async (dealerId) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const dealerFind = await Dealer.findById(dealerId).session(session);
+
+    if (!dealerFind) {
+      throw new Error("Dealer Not Found");
+    }
+
+    // if ((dealerFind.isActive = true)) {
+    //   throw new Error("Dealer Alredy Restored");
+    // }
+
+    const dealer = await Dealer.findByIdAndUpdate(
+      dealerId,
+      { isActive: true },
+      {
+        new: true,
+        runValidators: true,
+        session,
+      }
+    );
+
+    await session.commitTransaction();
+    session.endSession();
+    return dealer;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+
 module.exports = {
   generateDealer,
   getDealer,
@@ -261,4 +296,5 @@ module.exports = {
   dealerDropDown,
   updateDealer,
   deleteDealer,
+  restoreDealer
 };

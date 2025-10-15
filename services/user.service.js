@@ -248,6 +248,41 @@ const deleteTechnician = async (technicianId) => {
   }
 };
 
+const restoreTechnician = async (technicianId) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const technicianFind = await User.findById(technicianId).session(session);
+
+    if (!technicianFind) {
+      throw new Error("Technician Not Found");
+    }
+
+    // if ((technicianFind.isActive = false)) {
+    //   throw new Error("Technician Alredy Deleted");
+    // }
+
+    const technician = await User.findByIdAndUpdate(
+      technicianId,
+      { isActive: true },
+      {
+        new: true,
+        runValidators: true,
+        session,
+      }
+    );
+
+    await session.commitTransaction();
+    session.endSession();
+    return technician;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+
 const getUserCount = async () => {
   try {
     // Run all counts in parallel for efficiency
@@ -283,4 +318,5 @@ module.exports = {
   updateTechnician,
   deleteTechnician,
   getUserCount,
+  restoreTechnician
 };

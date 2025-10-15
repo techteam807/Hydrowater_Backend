@@ -135,6 +135,20 @@ const deleteDistributor = async (req, res) => {
   }
 };
 
+const restoreDistributor = async (req, res) => {
+  try {
+    const { distributorId } = req.params;
+    const result = await distributorService.restoreDistributor(distributorId);
+    return successResponse(res, result, "Distributor Restored Successfully");
+  } catch (error) {
+    return errorResponse(
+      res,
+      error.message || "Error while Restoring Distributor",
+      400
+    );
+  }
+};
+
 module.exports = {
   CreateDistributor,
   fetchDistributor,
@@ -142,4 +156,5 @@ module.exports = {
   fetchDistributorDropDown,
   editDistributor,
   deleteDistributor,
+  restoreDistributor
 };
