@@ -21,7 +21,7 @@ const errorResponse = (res, message = "Something went wrong", statusCode = 500, 
     // },
   };
 
-  if (details !== null) response.error.details = details;
+  if (details !== null) response.details = details;
 
   return res.status(statusCode).json(response);
 };

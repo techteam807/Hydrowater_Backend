@@ -1,8 +1,8 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const installationController = require("../controllers/installation.controller");
+const installationController = require('../controllers/installation.controller');
 
-router.post("/createInstallation", installationController.createInstallation);
-router.get("getInstallations", installationController.getInstallations);
+router.post('/registerInstallation', installationController.registerInstallation);
+router.get('/getInstallations', installationController.listInstallations);
 
 module.exports = router;

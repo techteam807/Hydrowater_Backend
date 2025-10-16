@@ -1,38 +1,38 @@
-const { successResponse, errorResponse } = require("../utils/response");
-const installationService = require("../services/installation.service");
+const installationService = require('../services/installation.service');
+const { errorResponse, successResponse } = require('../utils/response');
 
-const createInstallation = async (req, res) => {
+const registerInstallation = async (req, res) => {
   try {
-    const installationData = req.boy;
-    const result = await installationService.registerInstallation(installationData);
-    return successResponse(res, result, "Installation Successfully", 200);
+    const installation = await installationService.registerInstallation(req.body);
+    return successResponse(
+      res,
+      installation,
+      "Installation Registered Successfully"
+    );
   } catch (error) {
     return errorResponse(
       res,
-      error.message || "Error While Cretaing Installation",
-      500,
-      error
+      error.message || "Error While Registering Installation",
+      400
     );
   }
 };
 
-const getInstallations = async (req, res) => {
+const listInstallations = async (req, res) => {
   try {
     const installations = await installationService.listInstallations();
     return successResponse(
       res,
       installations,
-      "installations get Successfully",
-      200
+      "Installations Fetched Successfully"
     );
   } catch (error) {
     return errorResponse(
       res,
-      error.message || "Error While get Installation",
-      500,
-      error
+      error.message || "Error While Fetching Installations",
+      400
     );
   }
 };
 
-module.exports = { createInstallation, getInstallations };
+module.exports = { registerInstallation, listInstallations };

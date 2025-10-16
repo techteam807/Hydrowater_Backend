@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const InstallationSchema = new mongoose.Schema({
-  productId: { type: String, required: true, index: true },
+  productId: {type: mongoose.Schema.Types.ObjectId, ref: "Product"},
   serialNumber: { type: String },
   customerName: { type: String, required: true },
   address: { type: String, required: true },
@@ -13,7 +13,7 @@ const InstallationSchema = new mongoose.Schema({
     lng: { type: Number, required: true }
   },
   warrantyExpiry: { type: Date, required: true },
-  technicianId: { type: String },
+  technicianId: {type: mongoose.Schema.Types.ObjectId, ref: "User"},
   createdAt: { type: Date, default: Date.now }
 });
 
