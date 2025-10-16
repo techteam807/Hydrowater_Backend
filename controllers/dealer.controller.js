@@ -30,9 +30,9 @@ const fetchDealers = async (req, res) => {
   try {
     const {
       search,
-      city,
+      // city,
       state,
-      country,
+      // country,
       distributorId,
       page,
       limit,
@@ -57,9 +57,9 @@ const fetchDealers = async (req, res) => {
 
     const dealers = await dealerService.getDealers({
       search,
-      city,
+      // city,
       state,
-      country,
+      // country,
       distributorId,
       // filters,
       page,

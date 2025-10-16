@@ -41,7 +41,7 @@ const fetchDistributor = async (req, res) => {
 
 const fetchDistributors = async (req, res) => {
   try {
-    const { search, city, state, country, page, limit, isActive } = req.query;
+    const { search, state, page, limit, isActive } = req.query;
     // let filters = {};
 
     // if (req.query.filters) {
@@ -61,9 +61,9 @@ const fetchDistributors = async (req, res) => {
 
     const distributors = await distributorService.getDistributors({
       search,
-      city,
+      // city,
       state,
-      country,
+      // country,
       // filters,
       page,
       limit,

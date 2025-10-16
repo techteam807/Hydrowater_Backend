@@ -114,9 +114,9 @@ const getDistributor = async (distributorId = null) => {
 
 const getDistributors = async ({
   search = "",
-  city,
+  // city,
   state,
-  country,
+  // country,
   // filters = {},
   page = 1,
   limit = 10,
@@ -133,12 +133,13 @@ const getDistributors = async ({
         { email: { $regex: search, $options: "i" } },
         { name: { $regex: search, $options: "i" } },
         { company_name: { $regex: search, $options: "i" } },
+        { "address.city": { $regex: search, $options: "i" } },
       ];
     }
 
-    if (city) query["address.city"] = { $in: city };
+    // if (city) query["address.city"] = { $in: city };
     if (state) query["address.state"] = { $in: state };
-    if (country) query.country = { $in: country };
+    // if (country) query.country = { $in: country };
     if (isActive) query.isActive = isActive;
 
     // if (filters && Object.keys(filters).length > 0) {
