@@ -10,6 +10,10 @@ const genrateAdminUsers = async (name, email, password, userRole) => {
   session.startTransaction();
 
   try {
+    const existing = await User.findOne({ email, userRole }).session(session);
+    if (existing) {
+      throw new Error(`User Alredy Exits With Email ${email}`);
+    }
     const encryptedPassword = encryptPassword(password);
     const user = new User({
       name,
@@ -41,7 +45,7 @@ const genrateTechnicianUsers = async (
   session.startTransaction();
 
   try {
-    const existing = await User.findOne({ mobile_number }).session(session);
+    const existing = await User.findOne({ mobile_number, userRole:UserRoleEnum.SUPERTECHNICIAN || UserRoleEnum.TECHNICIAN }).session(session);
     if (existing) {
       throw new Error(`User Alredy Exits With Mobile ${mobile_number}`);
     }

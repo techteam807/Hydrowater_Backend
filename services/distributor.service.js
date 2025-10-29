@@ -71,6 +71,9 @@ const getDistributor = async (distributorId = null) => {
       const creditionalUser = await User.findById(distributor.userId).session(
         session
       );
+      if (creditionalUser?.password) {
+        creditionalUser.password = decryptPassword(creditionalUser.password);
+      }
 
       await session.commitTransaction();
       session.endSession();
@@ -94,9 +97,9 @@ const getDistributor = async (distributorId = null) => {
           userParentType: UserRoleEnum.DISTRIBUTOR,
         }).session(session);
         const creditionalUser = await User.findById(d.userId).session(session);
-        if (creditionalUser && creditionalUser.password) {
-          creditionalUser.password = decryptPassword(creditionalUser.password);
-        }
+        if (creditionalUser?.password) {
+        creditionalUser.password = decryptPassword(creditionalUser.password);
+      }
         return { distributor: d, dealers: dealer, users, creditionalUser };
       })
     );
