@@ -14,6 +14,7 @@ address: {
   },
     country: { type: String, default: "India" },
     distributorId: { type: mongoose.Schema.Types.ObjectId, ref: "Distributor" },
+    userId: {type: mongoose.Schema.Types.ObjectId, ref: "User"},
     isActive: {type:Boolean, default: true}
   },
   { timestamps: true }

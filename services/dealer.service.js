@@ -3,7 +3,7 @@ const Dealer = require("../models/dealer.model");
 const Distributor = require("../models/distributor.model");
 const User = require("../models/user.model");
 const generatePassword = require("../utils/generatePassword");
-const { encryptPassword } = require("../utils/encryption");
+const { encryptPassword, decryptPassword } = require("../utils/encryption");
 const { UserRoleEnum } = require("../utils/global");
 
 const generateDealer = async (userId, dealerData) => {
@@ -32,7 +32,8 @@ const generateDealer = async (userId, dealerData) => {
       userRole: UserRoleEnum.DEALER,
     });
     await user.save({ session });
-
+    dealer.userId = user._id;
+    await dealer.save({ session });
     await session.commitTransaction();
     session.endSession();
 
@@ -66,14 +67,21 @@ const getDealer = async (dealerId = null) => {
         userParentId: dealer._id,
         userRole: UserRoleEnum.DEALER,
       }).session(session);
+      const creditionalUser = await User.findById(dealer.userId).session(
+              session
+            );
+            if (creditionalUser?.password) {
+              creditionalUser.password = decryptPassword(creditionalUser.password);
+            }
 
       await session.commitTransaction();
       session.endSession();
 
       return {
         dealer,
-        distributor,
+        distributors:distributor,
         users,
+        creditionalUser,
       };
     }
 
@@ -87,7 +95,11 @@ const getDealer = async (dealerId = null) => {
           userParentId: d._id,
           userParentType: UserRoleEnum.DEALER,
         }).session(session);
-        return { dealer: d, distributor, users };
+                const creditionalUser = await User.findById(d.userId).session(session);
+                if (creditionalUser?.password) {
+                creditionalUser.password = decryptPassword(creditionalUser.password);
+              }
+        return { dealer: d, distributors:distributor, users, creditionalUser };
       })
     );
 
