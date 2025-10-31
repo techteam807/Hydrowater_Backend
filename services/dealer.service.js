@@ -66,21 +66,21 @@ const getDealer = async (dealerId = null) => {
       ).session(session);
       const users = await User.find({
         userParentId: dealer._id,
-        userRole: UserRoleEnum.DEALER,
+        userParentType: UserRoleEnum.DEALER,
       }).session(session);
       const creditionalUser = await User.findById(dealer.userId).session(
-              session
-            );
-            if (creditionalUser?.password) {
-              creditionalUser.password = decryptPassword(creditionalUser.password);
-            }
+        session
+      );
+      if (creditionalUser?.password) {
+        creditionalUser.password = decryptPassword(creditionalUser.password);
+      }
 
       await session.commitTransaction();
       session.endSession();
 
       return {
         dealer,
-        distributors:distributor,
+        distributor,
         users,
         creditionalUser,
       };
@@ -96,11 +96,11 @@ const getDealer = async (dealerId = null) => {
           userParentId: d._id,
           userParentType: UserRoleEnum.DEALER,
         }).session(session);
-                const creditionalUser = await User.findById(d.userId).session(session);
-                if (creditionalUser?.password) {
-                creditionalUser.password = decryptPassword(creditionalUser.password);
-              }
-        return { dealer: d, distributors:distributor, users, creditionalUser };
+        const creditionalUser = await User.findById(d.userId).session(session);
+        if (creditionalUser?.password) {
+          creditionalUser.password = decryptPassword(creditionalUser.password);
+        }
+        return { dealer: d, distributors: distributor, users, creditionalUser };
       })
     );
 
@@ -160,7 +160,7 @@ const getDealers = async ({
       })
       .skip(skip)
       .limit(limit)
-      .sort({createdAt : -1})
+      .sort({ createdAt: -1 })
       .session(session);
 
     const total = await Dealer.countDocuments(query).session(session);
@@ -310,5 +310,5 @@ module.exports = {
   dealerDropDown,
   updateDealer,
   deleteDealer,
-  restoreDealer
+  restoreDealer,
 };
