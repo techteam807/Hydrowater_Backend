@@ -28,6 +28,7 @@ const generateDealer = async (userId, dealerData) => {
     const user = new User({
       name: dealer.name,
       email: dealer.email,
+      isActive: true,
       password: encryptedPassword,
       userRole: UserRoleEnum.DEALER,
     });

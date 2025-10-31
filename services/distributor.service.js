@@ -28,6 +28,7 @@ const generateDistributor = async (userId, distributorData) => {
     const user = new User({
       name: distributor.name,
       email: distributor.email,
+      isActive: true,
       password: encryptedPassword,
       userRole: UserRoleEnum.DISTRIBUTOR,
     });
