@@ -100,7 +100,7 @@ const getDealer = async (dealerId = null) => {
         if (creditionalUser?.password) {
           creditionalUser.password = decryptPassword(creditionalUser.password);
         }
-        return { dealer: d, distributors: distributor, users, creditionalUser };
+        return { dealer: d, distributor, users, creditionalUser };
       })
     );
 
