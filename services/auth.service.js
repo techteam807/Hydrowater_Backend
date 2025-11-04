@@ -16,11 +16,15 @@ const loginAdmin = async (email, password) => {
     const isMatch = password === decryptedPassword;
     if (!isMatch) throw new Error("Invalid credentials");
 
+    const isAdmin = user.userRole === "admin";
+
     const token = generateToken({
       userId: user._id,
       email: user.email,
       role: user.userRole,
-    });
+    },
+    isAdmin
+  );
 
     await session.commitTransaction();
     session.endSession();
