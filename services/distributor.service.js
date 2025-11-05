@@ -99,8 +99,8 @@ const getDistributor = async (distributorId = null) => {
         }).session(session);
         const creditionalUser = await User.findById(d.userId).session(session);
         if (creditionalUser?.password) {
-        creditionalUser.password = decryptPassword(creditionalUser.password);
-      }
+          creditionalUser.password = decryptPassword(creditionalUser.password);
+        }
         return { distributor: d, dealers: dealer, users, creditionalUser };
       })
     );
@@ -137,12 +137,23 @@ const getDistributors = async ({
         { email: { $regex: search, $options: "i" } },
         { name: { $regex: search, $options: "i" } },
         { company_name: { $regex: search, $options: "i" } },
-        { "address.city": { $regex: search, $options: "i" } },
+        { "Office_address.city": { $regex: search, $options: "i" } },
+        { "wareHouse_address.city": { $regex: search, $options: "i" } },
+        { "other_address.city": { $regex: search, $options: "i" } },
+        { "Office_address.pincode": { $regex: search, $options: "i" } },
+        { "wareHouse_address.pincode": { $regex: search, $options: "i" } },
+        { "other_address.pincode": { $regex: search, $options: "i" } },
       ];
     }
 
     // if (city) query["address.city"] = { $in: city };
-    if (state) query["address.state"] = { $in: state };
+    if (state) {
+      query.$or = [
+        { "Office_address.state": { $in: state } },
+        { "wareHouse_address.state": { $in: state } },
+        { "other_address.state": { $in: state } },
+      ];
+    }
     // if (country) query.country = { $in: country };
     if (isActive) query.isActive = isActive;
 
@@ -154,7 +165,7 @@ const getDistributors = async ({
 
     const distributors = await Distributor.find(query)
       .skip(skip)
-      .sort({createdAt : -1})
+      .sort({ createdAt: -1 })
       .limit(limit)
       .session(session);
 
@@ -311,5 +322,5 @@ module.exports = {
   distributorDropDown,
   distributorUpdate,
   deleteDistributor,
-  restoreDistributor
+  restoreDistributor,
 };

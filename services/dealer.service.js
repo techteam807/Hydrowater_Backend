@@ -138,6 +138,7 @@ const getDealers = async ({
         { name: { $regex: search, $options: "i" } },
         { company_name: { $regex: search, $options: "i" } },
         { "address.city": { $regex: search, $options: "i" } },
+        { "address.pincode": { $regex: search, $options: "i" } },
       ];
     }
 

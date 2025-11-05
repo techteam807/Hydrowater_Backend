@@ -6,14 +6,12 @@ const userRoutes = require("../routes/user.route");
 const authRoutes = require("../routes/auth.route");
 const distributorRoutes = require("../routes/distributor.route");
 const dealerRoutes = require("../routes/dealer.route");
-const installationRoutes = require("../routes/installation.route");
-const productRoutes = require("../routes/product.route");
+const productInstallationRoutes = require("../routes/productInstallation.route");
 
 router.use("/user", userRoutes);
 router.use("/auth", authRoutes);
 router.use("/distributor", distributorRoutes);
 router.use("/dealer",dealerRoutes);
-router.use("/installation", installationRoutes);
-router.use("/product", productRoutes);
+router.use("/productInstallation", productInstallationRoutes);
 
 module.exports = router;

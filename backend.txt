@@ -1,0 +1,255 @@
+//controller
+
+const productService = require('../services/product(not).service');
+const { errorResponse, successResponse } = require('../utils/response');
+
+const createProduct = async (req, res) => {
+  try {
+    const product = await productService.createIfNotExists(req.body);
+return successResponse(
+      res,
+      product,
+      "Product Created Successfully"
+    );
+  } catch (error) {
+   return errorResponse(
+      res,
+      error.message || "Error While Creating Product",
+      400,
+      error
+    );
+  }
+};
+
+const getProduct = async (req, res) => {
+  try {
+    const product = await productService.findByProductId(req.params.productId);
+    if (!product) return errorResponse(res, "Product Not Found", 404);
+    return successResponse(
+      res,
+      product,
+      "Product Fetched Successfully"
+    );
+  } catch (error) {
+    return errorResponse(
+      res,
+      error.message || "Error While Fetching Product",
+      400,
+      error
+    );
+  }
+};
+
+const listProducts = async (req, res) => {
+  try {
+    const products = await productService.listProducts();
+   return successResponse(
+      res,
+      products,
+      "Products Fetched Successfully"
+    );
+  } catch (error) {
+    return errorResponse(
+      res,
+      error.message || "Error While Fetching Products",
+      400,
+      error
+    );
+  }
+};
+
+module.exports = { createProduct, getProduct, listProducts };
+
+const installationService = require('../services/installation(not).service');
+const { errorResponse, successResponse } = require('../utils/response');
+
+const registerInstallation = async (req, res) => {
+  try {
+    const installation = await installationService.registerInstallation(req.body);
+    return successResponse(
+      res,
+      installation,
+      "Installation Registered Successfully"
+    );
+  } catch (error) {
+    return errorResponse(
+      res,
+      error.message || "Error While Registering Installation",
+      400
+    );
+  }
+};
+
+const listInstallations = async (req, res) => {
+  try {
+    const installations = await installationService.listInstallations();
+    return successResponse(
+      res,
+      installations,
+      "Installations Fetched Successfully"
+    );
+  } catch (error) {
+    return errorResponse(
+      res,
+      error.message || "Error While Fetching Installations",
+      400
+    );
+  }
+};
+
+module.exports = { registerInstallation, listInstallations };
+
+//service
+
+const Installation = require('../models/installation.model');
+const productService = require('./product(not).service');
+
+const registerInstallation = async (data) => {
+  const product = await productService.findByProductId(data.productId);
+  if (!product) {
+    throw new Error('Product not found - verify QR / product ID');
+  }
+
+  if (product.registered) {
+    throw new Error('Product already registered');
+  }
+
+  // Calculate warranty expiry
+  const warrantyMonths = product.warrantyPeriodMonths || 12;
+  const installDate = new Date(data.installationDate);
+  const warrantyExpiry = new Date(installDate);
+  warrantyExpiry.setMonth(warrantyExpiry.getMonth() + warrantyMonths);
+
+  const installation = await Installation.create({
+    ...data,
+    serialNumber: data.serialNumber || product.serialNumber,
+    warrantyExpiry
+  });
+
+  // Mark product as registered
+  await productService.markRegistered(data.productId);
+
+  return installation;
+};
+
+const listInstallations = async (filter = {}) => {
+  return Installation.find(filter)
+  .populate('productId', 'name model serialNumber')
+  .populate('technicianId', 'name email')
+  .sort({ createdAt: -1 }).lean();
+};
+
+module.exports = { registerInstallation, listInstallations };
+
+const Product = require('../models/product.model');
+
+const findByProductId = async (productId) => {
+  return Product.findOne({ _id:productId });
+};
+
+const markRegistered = async (productId) => {
+  return Product.findOneAndUpdate(
+    { productId },
+    { registered: true, registeredAt: new Date() },
+    { new: true }
+  );
+};
+
+const createIfNotExists = async ({ productId, model, serialNumber, warrantyPeriodMonths = 12 }) => {
+  let product = await Product.findOne({ productId });
+  if (!product) {
+    product = await Product.create({ productId, model, serialNumber, warrantyPeriodMonths });
+  }
+  return product;
+};
+
+const listProducts = async () => {
+  return Product.find().sort({ createdAt: -1 }).lean();
+};
+
+module.exports = { findByProductId, markRegistered, createIfNotExists, listProducts };
+
+//route
+
+const express = require('express');
+const router = express.Router();
+const installationController = require('../controllers/installation.controller');
+
+router.post('/registerInstallation', installationController.registerInstallation);
+router.get('/getInstallations', installationController.listInstallations);
+
+module.exports = router;
+
+const express = require('express');
+const router = express.Router();
+const productController = require('../controllers/product.controller');
+const authToken = require("../middlewares/authToken");
+
+router.post('/createProduct', authToken, productController.createProduct);
+router.get('/getProducts', productController.listProducts);
+router.get('/productById/:productId', productController.getProduct);
+
+module.exports = router;
+
+
+//model
+
+const mongoose = require('mongoose');
+
+const ProductSchema = new mongoose.Schema({
+  productId: { type: String, required: true, unique: true }, // from QR
+  model: { type: String },
+  serialNumber: { type: String },
+  warrantyPeriodMonths: { type: Number, default: 12 },
+  registered: { type: Boolean, default: false },
+  registeredAt: { type: Date }
+}, { timestamps: true });
+
+module.exports = mongoose.model('Product', ProductSchema);
+
+const mongoose = require('mongoose');
+
+const InstallationSchema = new mongoose.Schema({
+  productId: {type: mongoose.Schema.Types.ObjectId, ref: "Product"},
+  serialNumber: { type: String },
+  customerName: { type: String, required: true },
+  address: { type: String, required: true },
+  contact: { type: String, required: true },
+  installationDate: { type: Date, required: true },
+  notes: { type: String },
+  geoLocation: {
+    lat: { type: Number, required: true },
+    lng: { type: Number, required: true }
+  },
+  warrantyExpiry: { type: Date, required: true },
+  technicianId: {type: mongoose.Schema.Types.ObjectId, ref: "User"},
+  createdAt: { type: Date, default: Date.now }
+});
+
+module.exports = mongoose.model('Installation', InstallationSchema);
+
+//req body
+
+//product
+
+{
+  "productId": "P12345",
+  "model": "AC Model X",
+  "serialNumber": "SN12345",
+  "warrantyPeriodMonths": 24
+}
+
+//product
+
+//installation
+{
+  "productId": "68f0aeb48dfa2231fd8258e4",
+  "customerName": "Alice Johnson",
+  "address": "123 Main Street",
+  "contact": "9876543210",
+  "installationDate": "2025-10-15",
+  "notes": "Installed successfully",
+  "geoLocation": { "lat": 28.6139, "lng": 77.2090 },
+  "technicianId": "68e0186f8e92b807fa6215b8"
+}
+//installation

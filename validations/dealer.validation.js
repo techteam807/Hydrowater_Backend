@@ -28,12 +28,24 @@ const createDealerValidation = Joi.object({
     state: Joi.string().trim().required().messages({
       "string.empty": "State is required",
     }),
+    pincode: Joi.string()
+      .pattern(/^[0-9]{6}$/)
+      .required()
+      .messages({
+        "string.empty": "Pincode is required",
+        "string.pattern.base": "Pincode must be 6 digits",
+      }),
   })
     .required()
     .messages({
       "object.base": "Address must be an object with line1, city, and state",
     }),
   country: Joi.string().trim().optional(),
+  gst_number: Joi.string().required().messages({
+    "string.empty": "GST number is required",
+  }),
+  additional_notes: Joi.string().allow(null, ""),
+  terms_conditions: Joi.string().allow(null, ""),
   distributorId: Joi.string().required().messages({
     "string.empty": "Dealer distributorId is required",
   }),
@@ -61,12 +73,22 @@ const updateDealerValidation = Joi.object({
     state: Joi.string().trim().required().messages({
       "string.empty": "State is required",
     }),
+    pincode: Joi.string()
+      .pattern(/^[0-9]{6}$/)
+      .required()
+      .messages({
+        "string.empty": "Pincode is required",
+        "string.pattern.base": "Pincode must be 6 digits",
+      }),
   })
     .required()
     .messages({
       "object.base": "Address must be an object with line1, city, and state",
     }),
   country: Joi.string().trim().optional(),
+  gst_number: Joi.string().trim().optional(),
+  additional_notes: Joi.string().trim().optional(),
+  terms_conditions: Joi.string().trim().optional(),
   distributorId: Joi.string().optional().messages({
     "string.empty": "Dealer distributorId is required",
   }),
