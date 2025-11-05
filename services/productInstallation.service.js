@@ -21,11 +21,55 @@ const registerProductInstallation = async (data) => {
   }
 };
 
-const listProductInstallations = async (filter = {}) => {
-  return ProductInstallation.find(filter)
-    .populate("technicianId", "name email")
-    .sort({ createdAt: -1 })
-    .lean();
+const listProductInstallations = async ({
+  search = "",
+  page = 1,
+  limit = 10,
+  isApproved,
+}) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    let query = {};
+    if (search) {
+      query.$or = [
+        {name: { $regex: search, $options: "i" }},
+        {mobile_number: { $regex: search, $options: "i" }},
+        {email: { $regex: search, $options: "i" }},
+        {productCode: { $regex: search, $options: "i" }},
+      ]
+    }
+    
+    if (isApproved) query.isApproved = isApproved;
+
+    const skip = (page - 1) * limit;
+
+    const installations = await ProductInstallation.find(query)
+      .populate("technicianId", "name email")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .session(session);
+
+    const total = await ProductInstallation.countDocuments(query).session(session);
+
+    await session.commitTransaction();
+    session.endSession();
+    return { 
+      data:installations,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+     };
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
 };
 
 const approveInstallation = async (installationId, approvalData) => {

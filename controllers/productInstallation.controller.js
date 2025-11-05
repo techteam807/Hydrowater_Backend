@@ -24,7 +24,7 @@ const listProductInstallations = async (req, res) => {
   try {
     const filter = req.query || {}; 
     const installations = await productInstallationService.listProductInstallations(filter);
-    return successResponse(res, installations, "Product Installations Fetched!", 200);
+    return successResponse(res, installations.data, "Product Installations Fetched!", 200, installations.pagination);
   } catch (error) {
     return errorResponse(
       res,
