@@ -51,13 +51,17 @@ const registerProductInstallationValidation = Joi.object({
       "any.required": "Technician ID is required",
     }),
 
-  images: Joi.array()
-    .items(
-      Joi.string().uri().messages({
-        "string.uri": "Each image must be a valid URL",
-      })
-    )
-    .optional(),
+images: Joi.array()
+  .items(
+    Joi.string().uri().messages({
+      "string.uri": "Each image must be a valid URL",
+    })
+  )
+  .max(5)
+  .messages({
+    "array.max": "You can upload a maximum of 5 images",
+  })
+  .optional(),
 
   geolocation: Joi.object({
     type: Joi.string().valid("Point").optional(),
