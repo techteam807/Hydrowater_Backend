@@ -13,7 +13,7 @@ const registerProductInstallationValidation = Joi.object({
       "string.pattern.base": "Mobile number must be 10 digits",
     }),
 
-  email: Joi.string().email().optional().messages({
+  email: Joi.string().email().allow(null, "").optional().messages({
     "string.email": "Email must be a valid email address",
   }),
 
@@ -21,7 +21,7 @@ const registerProductInstallationValidation = Joi.object({
     line1: Joi.string().trim().required().messages({
       "string.empty": "Address line 1 is required",
     }),
-    line2: Joi.string().trim().optional(),
+    line2: Joi.string().trim().allow(null, "").optional(),
     city: Joi.string().trim().required().messages({
       "string.empty": "City is required",
     }),

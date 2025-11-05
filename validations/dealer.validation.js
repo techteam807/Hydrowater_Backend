@@ -21,7 +21,7 @@ const createDealerValidation = Joi.object({
     line1: Joi.string().trim().required().messages({
       "string.empty": "Address line 1 is required",
     }),
-    line2: Joi.string().trim().optional(),
+    line2: Joi.string().trim().allow(null, "").optional(),
     city: Joi.string().trim().required().messages({
       "string.empty": "City is required",
     }),
@@ -66,7 +66,7 @@ const updateDealerValidation = Joi.object({
     line1: Joi.string().trim().required().messages({
       "string.empty": "Address line 1 is required",
     }),
-    line2: Joi.string().trim().optional(),
+    line2: Joi.string().trim().allow(null, "").optional(),
     city: Joi.string().trim().required().messages({
       "string.empty": "City is required",
     }),
