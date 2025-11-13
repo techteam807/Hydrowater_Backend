@@ -15,7 +15,7 @@ const technicianLogin = async (req, res) => {
     try {
         const { mobile_number } = req.body;
         const user = await authService.loginTechnician(mobile_number);
-        return successResponse(res, null, "OTP sent to your mobile", 200);
+        return successResponse(res, null, user.message || "OTP sent to your mobile", 200);
     } catch (error) {
         return errorResponse(res, error.message || "Error While Login As Technician", 500);
     }
