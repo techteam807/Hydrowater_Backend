@@ -165,7 +165,7 @@ const getDistributors = async ({
 
     const distributors = await Distributor.find(query)
       .skip(skip)
-      .sort({ createdAt: -1 })
+      .sort({ default: -1, createdAt: -1 })
       .limit(limit)
       .session(session);
 
@@ -197,7 +197,8 @@ const distributorDropDown = async () => {
   try {
     const distributor = await Distributor.find().select(
       "_id company_name name"
-    );
+    )
+    .sort({ company_name: 1 , default: -1});
     await session.commitTransaction();
     session.endSession();
     return distributor;

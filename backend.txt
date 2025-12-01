@@ -253,3 +253,24 @@ module.exports = mongoose.model('Installation', InstallationSchema);
   "technicianId": "68e0186f8e92b807fa6215b8"
 }
 //installation
+
+
+==new==
+-create Admin
+{
+  "_id": {
+    "$oid": "690872f9298c26e240ec4675"
+  },
+  "name": "admin",
+  "email": "admin@hydropod.in",
+  "password": "2c604966046753b2b42f75955a82ff1f:718a66e1bbefdee7af736412438acc85",
+  "userRole": "admin",
+  "createdAt": {
+    "$date": "2025-10-03T18:34:23.122Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-03T18:34:23.122Z"
+  },
+  "__v": 0,
+  "isActive": true
+}

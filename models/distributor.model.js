@@ -33,6 +33,7 @@ const DistributorSchema = new mongoose.Schema(
     terms_conditions: { type: String },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     isActive: { type: Boolean, default: true },
+    default: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

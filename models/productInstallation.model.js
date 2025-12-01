@@ -28,6 +28,9 @@ const productInstallationSchema = new mongoose.Schema(
       default: {},
     },
     productCode: { type: String, required: true },
+    productModel: { type: String, required: true },
+    productSize: { type: String, required: true },
+    productVesselColor: { type: String, required: true },
     isApproved: { type: Boolean, default: false },
   },
   { timestamps: true }

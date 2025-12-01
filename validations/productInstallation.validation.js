@@ -77,6 +77,18 @@ images: Joi.array()
   productCode: Joi.string().trim().required().messages({
     "string.empty": "Product code is required",
   }),
+
+  productModel: Joi.string().trim().required().messages({
+    "string.empty": "Product model is required",
+  }),
+
+  productSize: Joi.string().trim().required().messages({
+    "string.empty": "Product size is required",
+  }),
+
+  productVesselColor: Joi.string().trim().required().messages({
+    "string.empty": "Product vessel color is required",
+  }),
 });
 
 module.exports = {
