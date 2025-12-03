@@ -195,10 +195,10 @@ const distributorDropDown = async () => {
   session.startTransaction();
 
   try {
-    const distributor = await Distributor.find().select(
+    const distributor = await Distributor.find({isActive:true}).select(
       "_id company_name name default"
     )
-    .sort({ company_name: 1 , default: -1});
+    .sort({  default: -1, company_name: 1});
     await session.commitTransaction();
     session.endSession();
     return distributor;

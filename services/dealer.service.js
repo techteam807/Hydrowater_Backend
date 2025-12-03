@@ -190,7 +190,7 @@ const dealerDropDown = async (distributorId = null) => {
   session.startTransaction();
 
   try {
-    let query = {};
+    let query = {isActive: true};
     if (distributorId) {
       query.distributorId = distributorId;
     }
