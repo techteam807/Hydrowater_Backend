@@ -94,6 +94,7 @@ const createDistributorValidation = Joi.object({
   gst_number: Joi.string().required().messages({
     "string.empty": "GST number is required",
   }),
+  msme_number: Joi.string().optional().allow(null, ""),
   additional_notes: Joi.string().allow(null, ""),
   terms_conditions: Joi.string().allow(null, ""),
 });
@@ -184,6 +185,7 @@ const updateDistributorValidation = Joi.object({
     }),
   country: Joi.string().trim().optional(),
   gst_number: Joi.string().trim().optional(),
+  msme_number: Joi.string().trim().optional(),
   additional_notes: Joi.string().trim().optional(),
   terms_conditions: Joi.string().trim().optional(),
 }).min(1);

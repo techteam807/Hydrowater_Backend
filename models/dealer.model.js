@@ -15,6 +15,7 @@ const DealerSchema = new mongoose.Schema(
     },
     country: { type: String, default: "India" },
     gst_number: { type: String },
+    msme_number: { type: String},
     additional_notes: { type: String },
     terms_conditions: { type: String },
     distributorId: { type: mongoose.Schema.Types.ObjectId, ref: "Distributor" },
