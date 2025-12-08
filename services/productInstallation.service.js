@@ -23,6 +23,7 @@ const registerProductInstallation = async (data) => {
 
 const listProductInstallations = async ({
   search = "",
+  state,
   page = 1,
   limit = 10,
   isApproved,
@@ -38,8 +39,12 @@ const listProductInstallations = async ({
         {mobile_number: { $regex: search, $options: "i" }},
         {email: { $regex: search, $options: "i" }},
         {productCode: { $regex: search, $options: "i" }},
+        { "address.city" : { $regex: search, $options: "i"} },
+        { "address.pincode" : { $regex: search, $options: "i"} },
       ]
     }
+
+    if (state) query["address.state"] = { $in: state };
     
     if (isApproved) query.isApproved = isApproved;
 
