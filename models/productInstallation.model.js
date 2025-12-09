@@ -21,7 +21,8 @@ const productInstallationSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    images: [{ type: String }],
+    installation_checkList_images: [{ type: String }],
+    product_images: [{ type: String }],
     geolocation: {
       type: { type: String, enum: ["Point"] },
       coordinates: { type: [Number] }, // [longitude, latitude]

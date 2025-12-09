@@ -13,5 +13,6 @@ router.put("/updateTechnician/:technicianId", authToken, validate(updateTechnici
 router.put("/deleteTechnician/:technicianId", authToken, userController.deleteTechnician);
 router.put("/restoreTechnician/:technicianId", authToken, userController.restoreTechnician);
 router.get("/userCount", userController.fetchCountOfUsers);
+router.get("/getTechnicianDropDown", userController.fetchTechniciansDropDown);
 
 module.exports = router;

@@ -155,6 +155,15 @@ const fetchCountOfUsers = async (req, res) => {
   }
 };
 
+const fetchTechniciansDropDown = async (req, res) => {
+  try {
+const technicians = await userService.getTechniciansDropdown();
+return successResponse(res, technicians, "Technicians Get");
+  } catch (error) {
+  return errorResponse(res, error.message || "Error While Get Technicians", 400)
+  }
+}
+
 module.exports = {
   createAdminUsers,
   createTechnicianUsers,
@@ -163,5 +172,6 @@ module.exports = {
   deleteTechnician,
   fetchTechnicians,
   fetchCountOfUsers,
-  restoreTechnician
+  restoreTechnician,
+  fetchTechniciansDropDown
 };

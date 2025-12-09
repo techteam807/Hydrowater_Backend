@@ -45,7 +45,10 @@ const genrateTechnicianUsers = async (
   session.startTransaction();
 
   try {
-    const existing = await User.findOne({ mobile_number, userRole:UserRoleEnum.SUPERTECHNICIAN || UserRoleEnum.TECHNICIAN }).session(session);
+    const existing = await User.findOne({
+      mobile_number,
+      userRole: UserRoleEnum.SUPERTECHNICIAN || UserRoleEnum.TECHNICIAN,
+    }).session(session);
     if (existing) {
       throw new Error(`User Alredy Exits With Mobile ${mobile_number}`);
     }
@@ -100,7 +103,7 @@ const getAllUsers = async ({
 
     const users = await User.find(query)
       .skip(skip)
-      .sort({createdAt : -1})
+      .sort({ createdAt: -1 })
       .limit(limit)
       .session(session);
 
@@ -160,7 +163,7 @@ const getTechnicians = async ({
 
     const users = await User.find(query)
       .skip(skip)
-      .sort({createdAt : -1})
+      .sort({ createdAt: -1 })
       .limit(limit)
       .session(session);
 
@@ -292,27 +295,44 @@ const getUserCount = async () => {
     // Run all counts in parallel for efficiency
     const [technicianCount, distributorCount, dealerCount] = await Promise.all([
       // Count technicians from User model
-      User.countDocuments({ userRole: UserRoleEnum.TECHNICIAN, isActive: true }),
+      User.countDocuments({
+        userRole: UserRoleEnum.TECHNICIAN,
+        isActive: true,
+      }),
 
       // Count distributors from Distributor model
       Distributor.countDocuments({ isActive: true }),
 
       // Count dealers from Dealer model
-      Dealer.countDocuments({ isActive: true })
+      Dealer.countDocuments({ isActive: true }),
     ]);
 
     // Return unified response object
     return {
       technician: technicianCount,
       distributor: distributorCount,
-      dealer: dealerCount
+      dealer: dealerCount,
     };
   } catch (error) {
-    console.error('Error getting user counts:', error);
+    console.error("Error getting user counts:", error);
     throw error;
   }
 };
 
+const getTechniciansDropdown = async () => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const technicians = await User.find({ isActive: true,userRole: UserRoleEnum.TECHNICIAN }).select("_id name userRole userParentType userParentId").sort({name:1});
+    await session.commitTransaction();
+    session.endSession();
+    return technicians;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
 
 module.exports = {
   genrateAdminUsers,
@@ -322,5 +342,6 @@ module.exports = {
   updateTechnician,
   deleteTechnician,
   getUserCount,
-  restoreTechnician
+  restoreTechnician,
+  getTechniciansDropdown
 };
