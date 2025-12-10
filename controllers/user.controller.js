@@ -157,7 +157,8 @@ const fetchCountOfUsers = async (req, res) => {
 
 const fetchTechniciansDropDown = async (req, res) => {
   try {
-const technicians = await userService.getTechniciansDropdown();
+     const { parentType, parentId } = req.query;
+const technicians = await userService.getTechniciansDropdown({ parentType, parentId });
 return successResponse(res, technicians, "Technicians Get");
   } catch (error) {
   return errorResponse(res, error.message || "Error While Get Technicians", 400)

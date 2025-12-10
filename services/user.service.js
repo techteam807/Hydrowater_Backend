@@ -319,11 +319,21 @@ const getUserCount = async () => {
   }
 };
 
-const getTechniciansDropdown = async () => {
+const getTechniciansDropdown = async ({ parentType, parentId } = {}) => {
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    const technicians = await User.find({ isActive: true,userRole: UserRoleEnum.TECHNICIAN }).select("_id name userRole userParentType userParentId").sort({name:1});
+    let query = { isActive: true, userRole: UserRoleEnum.TECHNICIAN };
+
+    if (parentType) {
+      query.userParentType = parentType;
+    }
+    
+    if(parentId) {
+      query.userParentId = parentId;
+    }
+
+    const technicians = await User.find(query).select("_id name userRole userParentType userParentId").sort({name:1}).session(session);
     await session.commitTransaction();
     session.endSession();
     return technicians;
