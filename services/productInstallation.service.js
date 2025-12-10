@@ -1,6 +1,7 @@
 const { default: mongoose } = require("mongoose");
 const ProductInstallation = require("../models/productInstallation.model");
 const Dealer = require("../models/dealer.model");
+const User = require("../models/user.model");
 const Distributor = require("../models/distributor.model");
 const { getISTDate } = require("../utils/date");
 const { UserRoleEnum } = require("../utils/global");
@@ -30,6 +31,9 @@ const listProductInstallations = async ({
   page = 1,
   limit = 10,
   isApproved,
+  technicianId,
+  parentType,
+  parentId,
 }) => {
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -51,6 +55,33 @@ const listProductInstallations = async ({
 
     if (isApproved) query.isApproved = isApproved;
 
+    if (technicianId) {
+      const tech = await User.findById(technicianId).lean();
+
+      if (parentType && parentId) {
+        if (
+          !tech ||
+          tech.userParentType !== parentType ||
+          tech.userParentId.toString() !== parentId
+        ) {
+          query.technicianId = null; // or skip querying
+        } else {
+          query.technicianId = technicianId;
+        }
+      } else {
+        query.technicianId = technicianId;
+      }
+    } else if (parentType && parentId) {
+      const tech = await User.findOne({
+        userParentType: parentType,
+        userParentId: parentId,
+      })
+        .select("_id")
+        .lean();
+      if (tech) query.technicianId = tech._id;
+      else query.technicianId = null;
+    }
+
     const skip = (page - 1) * limit;
 
     const installations = await ProductInstallation.find(query)
@@ -64,51 +95,30 @@ const listProductInstallations = async ({
     for (const item of installations) {
       const tech = item?.technicianId;
 
-      if (!tech) {
-        item.installationBy = { type: "Unknown Technician" };
-        continue;
-      }
-
-      const parentType = tech.userParentType;
-      const parentId = tech.userParentId;
-
-      // Default Hydropod
-      let type = "Hydropod Technician";
-      let name = tech.name || "";
+      // Default
+      let type = UserRoleEnum.ADMIN;
+      let name = tech?.name || "";
       let companyName = "Hydropod";
 
-      // If DISTRIBUTOR
-      if (parentType === UserRoleEnum.DISTRIBUTOR) {
-        const distributor = await Distributor.findById(parentId)
-          .select("name company_name")
-          .session(session);
+      if (tech) {
+        const parentType = tech.userParentType;
+        const parentId = tech.userParentId;
 
-        type = "Distributor";
-        companyName = distributor?.company_name || "Hydropod";
+        if (parentType === UserRoleEnum.DISTRIBUTOR) {
+          const distributor = await Distributor.findById(parentId)
+            .select("company_name")
+            .session(session);
+          type = UserRoleEnum.DISTRIBUTOR;
+          companyName = distributor?.company_name;
+        } else if (parentType === UserRoleEnum.DEALER) {
+          const dealer = await Dealer.findById(parentId)
+            .select("company_name")
+            .session(session);
+          type = UserRoleEnum.DEALER;
+          companyName = dealer?.company_name;
+        }
       }
-
-      // If DEALER
-      else if (parentType === UserRoleEnum.DEALER) {
-        const dealer = await Dealer.findById(parentId)
-          .select("name company_name")
-          .session(session);
-
-        type = "Dealer";
-        companyName = dealer?.company_name || "Hydropod";
-      }
-
-      // If ADMIN → tech stays Hydropod
-      else if (parentType === UserRoleEnum.ADMIN) {
-        type = "Hydropod Technician";
-        companyName = "Hydropod";
-      }
-
-      // Assign final output
-      item.installationBy = {
-        type,
-        name,
-        companyName,
-      };
+      item.installationBy = { type, name, companyName };
     }
 
     const total = await ProductInstallation.countDocuments(query).session(
@@ -127,6 +137,8 @@ const listProductInstallations = async ({
       },
     };
   } catch (error) {
+    console.log("err:", error);
+
     await session.abortTransaction();
     session.endSession();
     throw error;
