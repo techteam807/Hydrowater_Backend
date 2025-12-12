@@ -16,6 +16,6 @@ router.use("/distributor", distributorRoutes);
 router.use("/dealer",dealerRoutes);
 router.use("/productInstallation", productInstallationRoutes);
 router.use("/version", versionRoutes);
-router.use("/banner", authToken, bannerRoutes)
+router.use("/banner", bannerRoutes)
 
 module.exports = router;
