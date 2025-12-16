@@ -147,13 +147,22 @@ const getDistributors = async ({
     }
 
     // if (city) query["address.city"] = { $in: city };
-    if (state) {
-      query.$or = [
-        { "Office_address.state": { $in: state } },
-        { "wareHouse_address.state": { $in: state } },
-        { "other_address.state": { $in: state } },
-      ];
-    }
+    // if (state) {
+    //   query.$or = [
+    //     { "Office_address.state": { $in: state } },
+    //     { "wareHouse_address.state": { $in: state } },
+    //     { "other_address.state": { $in: state } },
+    //   ];
+    // }
+        if (state) {
+  const states = Array.isArray(state) ? state : [state];
+
+  query.$or = [
+    { "Office_address.state": { $in: states } },
+    { "wareHouse_address.state": { $in: states } },
+    { "other_address.state": { $in: states } },
+  ];
+}
     // if (country) query.country = { $in: country };
     if (isActive) query.isActive = isActive;
 
