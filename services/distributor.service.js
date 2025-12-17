@@ -131,19 +131,23 @@ const getDistributors = async ({
 
   try {
     let query = {};
+    let andConditions = [];
+
     if (search) {
-      query.$or = [
-        { mobile_number: { $regex: search, $options: "i" } },
-        { email: { $regex: search, $options: "i" } },
-        { name: { $regex: search, $options: "i" } },
-        { company_name: { $regex: search, $options: "i" } },
-        { "Office_address.city": { $regex: search, $options: "i" } },
-        { "wareHouse_address.city": { $regex: search, $options: "i" } },
-        { "other_address.city": { $regex: search, $options: "i" } },
-        { "Office_address.pincode": { $regex: search, $options: "i" } },
-        { "wareHouse_address.pincode": { $regex: search, $options: "i" } },
-        { "other_address.pincode": { $regex: search, $options: "i" } },
-      ];
+      andConditions.push({
+        $or: [
+          { mobile_number: { $regex: search, $options: "i" } },
+          { email: { $regex: search, $options: "i" } },
+          { name: { $regex: search, $options: "i" } },
+          { company_name: { $regex: search, $options: "i" } },
+          { "Office_address.city": { $regex: search, $options: "i" } },
+          { "wareHouse_address.city": { $regex: search, $options: "i" } },
+          { "other_address.city": { $regex: search, $options: "i" } },
+          { "Office_address.pincode": { $regex: search, $options: "i" } },
+          { "wareHouse_address.pincode": { $regex: search, $options: "i" } },
+          { "other_address.pincode": { $regex: search, $options: "i" } },
+        ],
+      });
     }
 
     // if (city) query["address.city"] = { $in: city };
@@ -154,17 +158,22 @@ const getDistributors = async ({
     //     { "other_address.state": { $in: state } },
     //   ];
     // }
-        if (state) {
-  const states = Array.isArray(state) ? state : [state];
-
-  query.$or = [
-    { "Office_address.state": { $in: states } },
-    { "wareHouse_address.state": { $in: states } },
-    { "other_address.state": { $in: states } },
-  ];
-}
+    if (state) {
+      const states = Array.isArray(state) ? state : [state];
+      andConditions.push({
+        $or: [
+          { "Office_address.state": { $in: states } },
+          { "wareHouse_address.state": { $in: states } },
+          { "other_address.state": { $in: states } },
+        ],
+      });
+    }
     // if (country) query.country = { $in: country };
     if (isActive) query.isActive = isActive;
+
+    if (andConditions.length > 0) {
+      query.$and = andConditions;
+    }
 
     // if (filters && Object.keys(filters).length > 0) {
     //   query = { ...query, ...filters };
@@ -204,10 +213,9 @@ const distributorDropDown = async () => {
   session.startTransaction();
 
   try {
-    const distributor = await Distributor.find({isActive:true}).select(
-      "_id company_name name default"
-    )
-    .sort({  default: -1, company_name: 1});
+    const distributor = await Distributor.find({ isActive: true })
+      .select("_id company_name name default")
+      .sort({ default: -1, company_name: 1 });
     await session.commitTransaction();
     session.endSession();
     return distributor;
