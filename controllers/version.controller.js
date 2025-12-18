@@ -16,8 +16,7 @@ const addVersion = async (req, res) => {
   } catch (error) {
     return errorResponse(
       res,
-      error.message,
-      "Error while adding version code",
+      error.message || "Error while adding version code",
       400
     );
   }
@@ -42,8 +41,7 @@ const editVersion = async (req, res) => {
   } catch (error) {
     return errorResponse(
       res,
-      error.message,
-      "Error while updating version code",
+      error.message || "Error while updating version code",
       400
     );
   }
