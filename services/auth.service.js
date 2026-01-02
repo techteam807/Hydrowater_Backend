@@ -1,8 +1,31 @@
 const { default: mongoose } = require("mongoose");
 const User = require("../models/user.model");
+const Distributor = require("../models/distributor.model");
+const Dealer = require("../models/dealer.model");
 const { generateToken } = require("../config/jwt");
 const { decryptPassword } = require("../utils/encryption");
 const { sendWhatsAppOtp } = require("../utils/whatsapp");
+
+const getParent = async (user, session) => {
+  if (!user.userParentId || !user.userParentType);
+
+  switch (user.userParentType) {
+    case "admin":
+      return await User.findOne({ _id: user.userParentId })
+        .select("name email")
+        .session(session);
+    case "distributor":
+      return await Distributor.findOne({ _id: user.userParentId })
+        .select("company_name name email")
+        .session(session);
+    case "dealer":
+      return await Dealer.findOne({ _id: user.userParentId })
+        .select("company_name name email")
+        .session(session);
+    default:
+      return null;
+  }
+};
 
 const loginAdmin = async (email, password) => {
   const session = await mongoose.startSession();
@@ -50,7 +73,7 @@ const loginTechnician = async (mobile_number) => {
       let user = await User.findOne({
         mobile_number,
         userRole: { $in: ["technician", "supertechnician"] },
-      });
+      }).populate("userParentId");
 
       if (!user) {
         user = await User.create({
@@ -99,8 +122,6 @@ const loginTechnician = async (mobile_number) => {
 };
 
 const verifyOtp = async (mobile_number, otp) => {
-  console.log(mobile_number, otp);
-
   const session = await mongoose.startSession();
   session.startTransaction();
 
@@ -117,7 +138,6 @@ const verifyOtp = async (mobile_number, otp) => {
       }
 
       const token = generateToken({ userId: user._id, role: user.userRole });
-
       await session.commitTransaction();
       session.endSession();
       return { token, user };
@@ -130,11 +150,14 @@ const verifyOtp = async (mobile_number, otp) => {
     const isMasterOtp = otp === "999999";
 
     if (isMasterOtp) {
+      user.otp = null;
+      user.otpExpires = null;
+      await user.save({ session });
       const token = generateToken({ userId: user._id, role: user.userRole });
-
+      const parent = await getParent(user, session);
       await session.commitTransaction();
       session.endSession();
-      return { token, user };
+      return { token, user, parent };
     }
     if (user.otp !== otp || user.otpExpires < Date.now()) {
       throw new Error("Invalid or expired OTP");
@@ -142,12 +165,11 @@ const verifyOtp = async (mobile_number, otp) => {
     user.otp = null;
     user.otpExpires = null;
     await user.save({ session });
-
     const token = generateToken({ userId: user._id, role: user.userRole });
-
+    const parent = await getParent(user, session);
     await session.commitTransaction();
     session.endSession();
-    return { token, user };
+    return { token, user, parent };
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
