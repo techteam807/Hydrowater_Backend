@@ -23,12 +23,13 @@ const createAdminUsers = async (req, res) => {
 const createTechnicianUsers = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const { name, mobile_number, userRole, userParentId, userParentType } =
+    const { name, mobile_number, userRole, profile_picture, userParentId, userParentType } =
       req.body;
     const user = await userService.genrateTechnicianUsers(
       name,
       mobile_number,
       userRole,
+      profile_picture,
       userParentId,
       userParentType,
       userId

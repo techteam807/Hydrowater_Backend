@@ -37,6 +37,7 @@ const genrateTechnicianUsers = async (
   name,
   mobile_number,
   userRole,
+  profile_picture,
   userParentId,
   userParentType,
   userId
@@ -56,8 +57,9 @@ const genrateTechnicianUsers = async (
       name,
       mobile_number,
       userRole,
+      profile_picture:profile_picture || "",
       userParentId: userParentId || userId,
-      userParentType: userParentType || UserRoleEnum.SUPERADMIN,
+      userParentType: userParentType || UserRoleEnum.ADMIN,
     });
     await user.save({ session });
 

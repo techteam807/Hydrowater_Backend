@@ -30,13 +30,12 @@ const technicianValidation = Joi.object({
       "string.pattern.base":
         "Mobile number must be 10 digits",
     }),
+  profile_picture:Joi.string().optional().empty(""),
   userRole: Joi.string()
     .valid(UserRoleEnum.TECHNICIAN, UserRoleEnum.SUPERTECHNICIAN)
     .required(),
   userParentId: Joi.string().optional().empty(""),
-  userParentType: Joi.string().required().messages({
-    "string.empty": "userParentType is required",
-  }),
+  userParentType: Joi.string().optional().empty(""),
 });
 
 const updateTechnicianValidation = Joi.object({
@@ -49,6 +48,7 @@ const updateTechnicianValidation = Joi.object({
       "string.pattern.base":
         "Mobile number must be 10 digits",
     }),
+  profile_picture:Joi.string().trim().optional()
 }).min(1);
 
 module.exports = { adminValidation, technicianValidation, updateTechnicianValidation };
