@@ -4,8 +4,9 @@ const { successResponse, errorResponse } = require("../utils/response");
 const registerProductInstallation = async (req, res) => {
   try {
     const installationData = req.body;
+    const userId = req.user.userId;
 
-    const installation = await productInstallationService.registerProductInstallation(installationData);
+    const installation = await productInstallationService.registerProductInstallation(installationData, userId);
     return successResponse(
       res,
       installation,

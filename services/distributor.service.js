@@ -6,7 +6,7 @@ const generatePassword = require("../utils/generatePassword");
 const { encryptPassword, decryptPassword } = require("../utils/encryption");
 const { UserRoleEnum } = require("../utils/global");
 
-const generateDistributor = async (userId, distributorData) => {
+const generateDistributor = async (distributorData) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 

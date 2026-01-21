@@ -3,9 +3,8 @@ const dealerService = require("../services/dealer.service");
 
 const createDealer = async (req, res) => {
   try {
-    const userId = req.user.userId;
     const dealerData = req.body;
-    const dealer = await dealerService.generateDealer(userId, dealerData);
+    const dealer = await dealerService.generateDealer(dealerData);
     return successResponse(res, dealer, "Dealer Created successfully", 200);
   } catch (error) {
     return errorResponse(

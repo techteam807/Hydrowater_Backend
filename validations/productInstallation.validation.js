@@ -43,14 +43,6 @@ const registerProductInstallationValidation = Joi.object({
 
   installation_notes: Joi.string().allow(null, "").optional(),
 
-  technicianId: Joi.string()
-    .regex(/^[0-9a-fA-F]{24}$/)
-    .required()
-    .messages({
-      "string.pattern.base": "Technician ID must be a valid ObjectId",
-      "any.required": "Technician ID is required",
-    }),
-
 product_images: Joi.array()
   .items(
     Joi.string().uri().messages({

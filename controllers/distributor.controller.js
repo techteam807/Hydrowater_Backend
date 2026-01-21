@@ -3,12 +3,9 @@ const distributorService = require("../services/distributor.service");
 
 const CreateDistributor = async (req, res) => {
   try {
-    const userId = req.user.userId;
-
     const distributorData = req.body;
 
     const distributor = await distributorService.generateDistributor(
-      userId,
       distributorData
     );
     return successResponse(

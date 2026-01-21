@@ -11,11 +11,7 @@ module.exports = async function (req, res, next) {
   try {
     const decoded = verifyToken(token);
 
-    console.log("decoded:",decoded);
-    
-
     const user = await User.findById(decoded.userId).select("_id");
-    console.log("user",user);
 
     if(!user) {
       return errorResponse(res, "User not found", 404, "USER_NOT_FOUND");

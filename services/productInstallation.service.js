@@ -6,12 +6,13 @@ const Distributor = require("../models/distributor.model");
 const { getISTDate } = require("../utils/date");
 const { UserRoleEnum } = require("../utils/global");
 
-const registerProductInstallation = async (data) => {
+const registerProductInstallation = async (data, userId) => {
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
     const installation = new ProductInstallation(data);
     installation.installation_date = getISTDate();
+    installation.technicianId = userId;
     await installation.save({ session });
 
     await session.commitTransaction();
