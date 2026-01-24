@@ -4,6 +4,7 @@ const Distributor = require("../models/distributor.model");
 const Dealer = require("../models/dealer.model");
 const { UserRoleEnum } = require("../utils/global");
 const { decryptPassword, encryptPassword } = require("../utils/encryption");
+const { generateUniquePin } = require("../utils/generatePassword");
 
 const genrateAdminUsers = async (name, email, password, userRole) => {
   const session = await mongoose.startSession();
@@ -53,6 +54,9 @@ const genrateTechnicianUsers = async (
     if (existing) {
       throw new Error(`User Alredy Exits With Mobile ${mobile_number}`);
     }
+
+    const { plainPin } = await generateUniquePin(session);
+
     const user = new User({
       name,
       mobile_number,
@@ -60,7 +64,9 @@ const genrateTechnicianUsers = async (
       profile_picture:profile_picture || "",
       userParentId: userParentId || userId,
       userParentType: userParentType || UserRoleEnum.ADMIN,
+      securityPin:plainPin || 999999,
     });
+    
     await user.save({ session });
 
     await session.commitTransaction();

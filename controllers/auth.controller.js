@@ -11,11 +11,21 @@ const adminLogin = async (req, res) => {
     }
 };
 
-const technicianLogin = async (req, res) => {
+const technicianLogin_old = async (req, res) => {
     try {
         const { mobile_number } = req.body;
         const user = await authService.loginTechnician(mobile_number);
         return successResponse(res, null, user.message || "OTP sent to your mobile", 200);
+    } catch (error) {
+        return errorResponse(res, error.message || "Error While Login As Technician", 500);
+    }
+};
+
+const technicianLogin = async (req, res) => {
+    try {
+        const { mobile_number, securityPin } = req.body;
+        const user = await authService.loginTechnician(mobile_number, securityPin);
+        return successResponse(res, user, "Technician Login successfully", 200);
     } catch (error) {
         return errorResponse(res, error.message || "Error While Login As Technician", 500);
     }

@@ -20,6 +20,8 @@
 // };
 
 // module.exports = generatePassword;
+const User = require("../models/user.model");
+
 const generatePassword = (name) => {
   if (!name || name.length < 1) throw new Error("Name must have at least 1 character");
 
@@ -42,4 +44,33 @@ const generatePassword = (name) => {
   return `${namePart}${randomDigits}`;
 };
 
-module.exports = generatePassword;
+const generateUniquePin = async (session) => {
+  while (true) {
+    const pin = Math.floor(100000 + Math.random() * 900000).toString();
+
+    const pinExists = await User.findOne({
+      securityPin: { $exists: true }, 
+    }).session(session);
+
+    // Since PIN is hashed, we must compare
+    if (!pinExists) {
+      return { plainPin: pin};
+    }
+
+    const usersWithPin = await User.find({ securityPin: { $exists: true } }).session(session);
+
+    let duplicate = false;
+    for (const user of usersWithPin) {
+      if (user.securityPin === pin) {
+        duplicate = true;
+        break;
+      }
+    }
+
+    if (!duplicate) {
+      return { plainPin: pin};
+    }
+  }
+};
+
+module.exports = { generatePassword, generateUniquePin };
