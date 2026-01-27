@@ -5,6 +5,8 @@ const User = require("../models/user.model");
 const Distributor = require("../models/distributor.model");
 const { getISTDate } = require("../utils/date");
 const { UserRoleEnum } = require("../utils/global");
+const { sendWhatsAppOtp } = require("../utils/whatsapp");
+const Otp = require("../models/otp.model");
 
 const registerProductInstallation = async (data, userId) => {
   const session = await mongoose.startSession();
@@ -122,9 +124,8 @@ const listProductInstallations = async ({
       item.installationBy = { type, name, companyName };
     }
 
-    const total = await ProductInstallation.countDocuments(query).session(
-      session
-    );
+    const total =
+      await ProductInstallation.countDocuments(query).session(session);
 
     await session.commitTransaction();
     session.endSession();
@@ -150,9 +151,8 @@ const approveInstallation = async (installationId, approvalData) => {
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    const installation = await ProductInstallation.findById(
-      installationId
-    ).session(session);
+    const installation =
+      await ProductInstallation.findById(installationId).session(session);
     if (!installation) {
       throw new Error("Installation not found");
     }
@@ -176,8 +176,40 @@ const approveInstallation = async (installationId, approvalData) => {
   }
 };
 
+const sendOtp = async (mobile_number) => {
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  const otpExpires = new Date(Date.now() + 5 * 60 * 1000);
+
+  await Otp.findOneAndUpdate(
+    { mobile_number },
+    { otp, otpExpires },
+    { upsert: true, new: true },
+  );
+
+  await sendWhatsAppOtp(mobile_number, otp);
+};
+
+const verifyOtp = async (mobile_number, otp) => {
+  const data = await Otp.findOne({ mobile_number, otp });
+  if (!data) {
+    throw new Error("Invalid OTP");
+  }
+  if (data.otpExpires < new Date()) {
+    await Otp.deleteOne({ mobile_number });
+    throw new Error("OTP expired");
+  }
+
+  await Otp.deleteOne({ mobile_number });
+
+  return {
+    Verified: true,
+  };
+};
+
 module.exports = {
   registerProductInstallation,
   listProductInstallations,
   approveInstallation,
+  sendOtp,
+  verifyOtp,
 };

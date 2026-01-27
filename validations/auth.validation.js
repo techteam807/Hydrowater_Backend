@@ -20,10 +20,10 @@ mobile_number: Joi.string()
       "string.pattern.base":
         "Mobile number must be 10 digits",
     }),
-securityPin: Joi.string().pattern(/^[0-9]{6}$/).required().messages({
-    "string.empty": "Security PIN is required",
-    "string.pattern.base": "Security PIN must be 6 digits",
-  }),
+// securityPin: Joi.string().pattern(/^[0-9]{6}$/).required().messages({
+//     "string.empty": "Security PIN is required",
+//     "string.pattern.base": "Security PIN must be 6 digits",
+//   }),
 });
 
 const verifyOtpValidation = Joi.object({

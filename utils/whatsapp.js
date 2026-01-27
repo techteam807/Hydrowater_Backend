@@ -1,5 +1,5 @@
 const request = require("request");
-const GALLABOX_OTP = "bw_scan_app";
+const GALLABOX_OTP = "hydropod_app_customer_clone";
 
 const sendWhatsAppOtp = async (mobile_number, otp) => {
   return new Promise((resolve, reject) => {

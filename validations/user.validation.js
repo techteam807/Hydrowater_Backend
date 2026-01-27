@@ -49,9 +49,9 @@ const updateTechnicianValidation = Joi.object({
         "Mobile number must be 10 digits",
     }),
   profile_picture:Joi.string().trim().optional(),
-  securityPin: Joi.string().pattern(/^[0-9]{6}$/).optional().messages({
-    "string.pattern.base": "Security PIN must be 6 digits",
-  }),
+  // securityPin: Joi.string().pattern(/^[0-9]{6}$/).optional().messages({
+  //   "string.pattern.base": "Security PIN must be 6 digits",
+  // }),
 }).min(1);
 
 module.exports = { adminValidation, technicianValidation, updateTechnicianValidation };

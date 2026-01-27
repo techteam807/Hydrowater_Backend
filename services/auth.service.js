@@ -63,7 +63,7 @@ const loginAdmin = async (email, password) => {
   }
 };
 
-const loginTechnician_old = async (mobile_number) => {
+const loginTechnician = async (mobile_number) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
@@ -104,7 +104,7 @@ const loginTechnician_old = async (mobile_number) => {
     user.otpExpires = Date.now() + 5 * 60 * 1000; // 5 minutes
     await user.save();
     console.log(`OTP for ${mobile_number}: ${otp}`);
-    // await sendWhatsAppOtp(mobile_number, otp);
+    await sendWhatsAppOtp(mobile_number, otp);
 
     await session.commitTransaction();
     session.endSession();
@@ -121,7 +121,7 @@ const loginTechnician_old = async (mobile_number) => {
   }
 };
 
-const loginTechnician = async (mobile_number, securityPin) => {
+const loginTechnician_new = async (mobile_number, securityPin) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
