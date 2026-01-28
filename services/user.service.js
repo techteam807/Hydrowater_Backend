@@ -51,11 +51,12 @@ const genrateTechnicianUsers = async (
       mobile_number,
       userRole: UserRoleEnum.SUPERTECHNICIAN || UserRoleEnum.TECHNICIAN,
     }).session(session);
+
     if (existing) {
       throw new Error(`User Alredy Exits With Mobile ${mobile_number}`);
     }
 
-    const { plainPin } = await generateUniquePin(session);
+    // const { plainPin } = await generateUniquePin(session);
 
     const user = new User({
       name,
@@ -64,7 +65,7 @@ const genrateTechnicianUsers = async (
       profile_picture:profile_picture || "",
       userParentId: userParentId || userId,
       userParentType: userParentType || UserRoleEnum.ADMIN,
-      securityPin:plainPin || 999999,
+      // securityPin:plainPin || 999999,
     });
     
     await user.save({ session });
