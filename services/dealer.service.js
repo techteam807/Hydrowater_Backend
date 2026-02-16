@@ -2,7 +2,7 @@ const { default: mongoose } = require("mongoose");
 const Dealer = require("../models/dealer.model");
 const Distributor = require("../models/distributor.model");
 const User = require("../models/user.model");
-const generatePassword = require("../utils/generatePassword");
+const { generatePassword } = require("../utils/generatePassword");
 const { encryptPassword, decryptPassword } = require("../utils/encryption");
 const { UserRoleEnum } = require("../utils/global");
 
